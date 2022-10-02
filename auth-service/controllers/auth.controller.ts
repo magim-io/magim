@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import ErrorResponse from "../../common/exceptions/error-response.exception";
 import asyncHanlder from "../middleware/async-handler.middleware";
-import { retrieveGithubUser } from "../services/auth.service";
+import { login, retrieveGithubUser } from "../services/auth.service";
 import { get } from "lodash";
 import { GithubUser } from "../models/github-user.model";
 import jwt from "jsonwebtoken";
@@ -18,14 +18,18 @@ const loginWithGithub = asyncHanlder(
 
     const githubUser: GithubUser = await retrieveGithubUser({ code });
 
-    // @todo: check and register user
+    const user = await login({
+      user: githubUser,
+    });
 
-    if (!!CONFIG.SERVER.JWT_SECRET) {
-      const token = jwt.sign(githubUser, CONFIG.SERVER.JWT_SECRET);
-      res.cookie(CONFIG.SERVER.COOKIE_NAME, token, {
-        httpOnly: true,
-        domain: `localhost`,
-      });
+    if (user !== null) {
+      if (!!CONFIG.SERVER.JWT_SECRET) {
+        const token = jwt.sign(user, CONFIG.SERVER.JWT_SECRET);
+        res.cookie(CONFIG.SERVER.COOKIE_NAME, token, {
+          httpOnly: true,
+          domain: `localhost`,
+        });
+      }
     }
 
     res.redirect(`http://localhost:${CONFIG.WEB.PORT}`);

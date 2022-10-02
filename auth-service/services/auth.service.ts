@@ -3,6 +3,9 @@ import axios from "axios";
 import querystring from "query-string";
 import { GithubUser } from "../models/github-user.model";
 import ErrorResponse from "../../common/exceptions/error-response.exception";
+import { PrismaClient, User } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const retrieveGithubUser = async ({
   code,
@@ -29,4 +32,35 @@ const retrieveGithubUser = async ({
   }
 };
 
-export { retrieveGithubUser };
+const login = async ({ user }: { user: GithubUser }): Promise<User | null> => {
+  try {
+    const { name, avatar_url, bio, email, location, login } = user;
+
+    const extUser = await prisma.user.findFirst({
+      where: {
+        email: email,
+      },
+    });
+
+    if (user === null) {
+      const newUser = await prisma.user.create({
+        data: {
+          name: name,
+          avatarUrl: avatar_url,
+          bio: bio,
+          email: email,
+          location: location,
+          login: login,
+        },
+      });
+
+      return newUser;
+    }
+
+    return extUser;
+  } catch (err) {
+    throw new ErrorResponse("Failed to login user", 500);
+  }
+};
+
+export { retrieveGithubUser, login };

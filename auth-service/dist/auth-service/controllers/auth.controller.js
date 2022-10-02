@@ -26,13 +26,17 @@ const loginWithGithub = (0, async_handler_middleware_1.default)((req, res, next)
         return next(new error_response_exception_1.default("Github code is missing", 401));
     }
     const githubUser = yield (0, auth_service_1.retrieveGithubUser)({ code });
-    // @todo: check and register user
-    if (!!config_1.default.SERVER.JWT_SECRET) {
-        const token = jsonwebtoken_1.default.sign(githubUser, config_1.default.SERVER.JWT_SECRET);
-        res.cookie(config_1.default.SERVER.COOKIE_NAME, token, {
-            httpOnly: true,
-            domain: `localhost`,
-        });
+    const user = yield (0, auth_service_1.login)({
+        user: githubUser,
+    });
+    if (user !== null) {
+        if (!!config_1.default.SERVER.JWT_SECRET) {
+            const token = jsonwebtoken_1.default.sign(user, config_1.default.SERVER.JWT_SECRET);
+            res.cookie(config_1.default.SERVER.COOKIE_NAME, token, {
+                httpOnly: true,
+                domain: `localhost`,
+            });
+        }
     }
     res.redirect(`http://localhost:${config_1.default.WEB.PORT}`);
 }));

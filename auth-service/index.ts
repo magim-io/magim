@@ -1,5 +1,5 @@
 import express, { Express } from "express";
-import router from "./routes/auth.route";
+import authRouter from "./routes/auth.route";
 import morgan from "morgan";
 import errorHandler from "./middleware/error-handler.middleware";
 import CONFIG from "./config/config";
@@ -13,7 +13,7 @@ if (CONFIG.ENV === "development") {
   app.use(morgan("dev"));
 }
 
-app.use("/api/auth/github", router);
+app.use("/api/auth/github", authRouter);
 
 app.use(errorHandler);
 

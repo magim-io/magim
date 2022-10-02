@@ -1,0 +1,15 @@
+version: "3"
+services:
+  magim-db:
+    container_name: magim-db
+    image: mysql:8.0.30
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: Password1234
+      MYSQL_DATABASE: magim-db
+    volumes:
+      - db:/var/lib/mysql
+volumes:
+  db:
+    driver: local

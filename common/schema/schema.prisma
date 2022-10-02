@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  USER
+  MEMBER
+  OWNER
+}
+
+model User {
+  id                String              @id @default(uuid())
+  login             String              @unique
+  avatarUrl         String
+  name              String
+  location          String
+  email             String              @unique
+  bio               String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  type              UserType            @default(USER)
+  UserOrganization  UserOrganization[]
+  UserTeam          UserTeam[]
+  OwnerOrganization OwnerOrganization[]
+
+  @@map("tblUser")
+}
+
+model Organization {
+  id                String              @id @default(uuid())
+  login             String              @unique
+  name              String
+  description       String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  UserOrganization  UserOrganization[]
+  TeamOrganization  TeamOrganization[]
+  OwnerOrganization OwnerOrganization[]
+
+  @@map("tblOrganization")
+}
+
+model Team {
+  id               String             @id @default(uuid())
+  login            String
+  name             String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  UserTeam         UserTeam[]
+  TeamOrganization TeamOrganization[]
+
+  @@map("tblTeam")
+}
+
+model UserOrganization {
+  id             String       @id @default(uuid())
+  userId         String
+  organizationId String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("tblUserOrganization")
+}
+
+model UserTeam {
+  id        String   @id @default(uuid())
+  userId    String
+  teamId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tblUserTeam")
+}
+
+model TeamOrganization {
+  id             String       @id @default(uuid())
+  teamId         String
+  organizationId String
+  team           Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("tblTeamOrganization")
+}
+
+model OwnerOrganization {
+  id             String       @id @default(uuid())
+  ownerId        String
+  organizationId String
+  owner          User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("tblOwnerOrganization")
+}

@@ -1,8 +1,8 @@
 import express from "express";
 import { loginWithGithub } from "../controllers/auth.controller";
 
-const router = express.Router();
+const authRouter = express.Router();
 
-router.route("/").get(loginWithGithub);
+authRouter.route("/").get(loginWithGithub);
 
-export default router;
+export default authRouter;
