@@ -4,10 +4,12 @@ import morgan from "morgan";
 import errorHandler from "./middleware/error-handler.middleware";
 import CONFIG from "./config/config";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app: Express = express();
 
 app.use(cors());
+app.use(cookieParser());
 
 if (CONFIG.ENV === "development") {
   app.use(morgan("dev"));
