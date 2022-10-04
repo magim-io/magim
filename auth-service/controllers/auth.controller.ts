@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import ErrorResponse from "../../common/exceptions/error-response.exception";
 import asyncHanlder from "../middleware/async-handler.middleware";
-import { login, retrieveGithubUser } from "../services/auth.service";
+import * as authService from "../services/auth.service";
 import { get } from "lodash";
 import { GithubUser } from "../models/github-user.model";
 import jwt from "jsonwebtoken";
@@ -16,9 +16,11 @@ const loginWithGithub = asyncHanlder(
       return next(new ErrorResponse("Github code is missing", 401));
     }
 
-    const githubUser: GithubUser = await retrieveGithubUser({ code });
+    const githubUser: GithubUser = await authService.retrieveGithubUser({
+      code,
+    });
 
-    const user = await login({
+    const user = await authService.loginWithGithub({
       user: githubUser,
     });
 

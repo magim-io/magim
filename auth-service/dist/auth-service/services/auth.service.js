@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.retrieveGithubUser = void 0;
+exports.loginWithGithub = exports.retrieveGithubUser = void 0;
 const config_1 = __importDefault(require("../config/config"));
 const axios_1 = __importDefault(require("axios"));
 const query_string_1 = __importDefault(require("query-string"));
@@ -36,7 +36,7 @@ const retrieveGithubUser = ({ code, }) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.retrieveGithubUser = retrieveGithubUser;
-const login = ({ user }) => __awaiter(void 0, void 0, void 0, function* () {
+const loginWithGithub = ({ user, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, avatar_url, bio, email, location, login } = user;
         const extUser = yield prisma.user.findFirst({
@@ -63,4 +63,4 @@ const login = ({ user }) => __awaiter(void 0, void 0, void 0, function* () {
         throw new error_response_exception_1.default("Failed to login user", 500);
     }
 });
-exports.login = login;
+exports.loginWithGithub = loginWithGithub;

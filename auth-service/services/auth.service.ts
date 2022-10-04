@@ -32,7 +32,11 @@ const retrieveGithubUser = async ({
   }
 };
 
-const login = async ({ user }: { user: GithubUser }): Promise<User | null> => {
+const loginWithGithub = async ({
+  user,
+}: {
+  user: GithubUser;
+}): Promise<User | null> => {
   try {
     const { name, avatar_url, bio, email, location, login } = user;
 
@@ -63,4 +67,4 @@ const login = async ({ user }: { user: GithubUser }): Promise<User | null> => {
   }
 };
 
-export { retrieveGithubUser, login };
+export { retrieveGithubUser, loginWithGithub };

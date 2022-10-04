@@ -5,10 +5,12 @@ import errorHandler from "./middleware/error-handler.middleware";
 import CONFIG from "./config/config";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import orgRouter from "./routes/organization.route";
 
 const app: Express = express();
 
 app.use(cors());
+app.use(express.json());
 app.use(cookieParser());
 
 if (CONFIG.ENV === "development") {
@@ -16,6 +18,7 @@ if (CONFIG.ENV === "development") {
 }
 
 app.use("/api/auth/github", authRouter);
+app.use("/api/v1/organizations", orgRouter);
 
 app.use(errorHandler);
 
