@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteOrg = exports.retrieveOrgs = exports.retrieveOrg = exports.createOrg = void 0;
+exports.joinOrg = exports.inviteMember = exports.deleteOrg = exports.retrieveOrgs = exports.retrieveOrg = exports.createOrg = void 0;
 const client_1 = require("@prisma/client");
 const error_response_exception_1 = __importDefault(require("../../common/exceptions/error-response.exception"));
+const nodemailer_1 = __importDefault(require("nodemailer"));
 const prisma = new client_1.PrismaClient();
 const createOrg = ({ organization, owner, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -122,3 +123,123 @@ const deleteOrg = ({ organizationId, owner, }) => __awaiter(void 0, void 0, void
     }
 });
 exports.deleteOrg = deleteOrg;
+const inviteMember = ({ user, memberEmail, organizationId, isOwner, }) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let inviterOrg;
+        let newMember;
+        switch (isOwner) {
+            case true:
+                inviterOrg = yield prisma.ownerOrganization.findFirst({
+                    where: {
+                        ownerId: user.id,
+                        organizationId: organizationId,
+                    },
+                });
+                if (!inviterOrg) {
+                    throw new error_response_exception_1.default("Inviter does not belong to the organization", 403);
+                }
+                newMember = yield prisma.user.findFirst({
+                    where: {
+                        email: memberEmail,
+                    },
+                });
+                if (!newMember) {
+                    throw new error_response_exception_1.default("Fail to find member to invite", 404);
+                }
+                break;
+            case false:
+                inviterOrg = yield prisma.userOrganization.findFirst({
+                    where: {
+                        userId: user.id,
+                        organizationId: organizationId,
+                    },
+                });
+                if (!inviterOrg) {
+                    throw new error_response_exception_1.default("Inviter does not belong to the organization", 403);
+                }
+                newMember = yield prisma.user.findFirst({
+                    where: {
+                        email: memberEmail,
+                    },
+                });
+                if (!newMember) {
+                    throw new error_response_exception_1.default("Fail to find member to invite", 404);
+                }
+                break;
+        }
+        const inviatation = yield prisma.organizationInviatation.create({
+            data: {
+                userId: newMember.id,
+                organizationId: organizationId,
+            },
+        });
+        if (inviatation) {
+            sendEmail();
+        }
+        return newMember;
+    }
+    catch (err) {
+        throw new error_response_exception_1.default("Fail to invite member to organization", 500);
+    }
+});
+exports.inviteMember = inviteMember;
+const joinOrg = ({ user, organizationId, inviatationId, }) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const inviatation = yield prisma.organizationInviatation.findFirst({
+            where: {
+                id: inviatationId,
+            },
+        });
+        if (!inviatation) {
+            throw new error_response_exception_1.default("You have not been invited to join the organization", 404);
+        }
+        yield prisma.organizationInviatation.delete({
+            where: {
+                id: inviatation.id,
+            },
+        });
+        return yield prisma.userOrganization.create({
+            data: {
+                organizationId: organizationId,
+                userId: user.id,
+            },
+        });
+    }
+    catch (err) {
+        throw new error_response_exception_1.default("Fail to join organization", 500);
+    }
+});
+exports.joinOrg = joinOrg;
+const sendEmail = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Generate test SMTP service account from ethereal.email
+        // Only needed if you don't have a real mail account for testing
+        let testAccount = yield nodemailer_1.default.createTestAccount();
+        // create reusable transporter object using the default SMTP transport
+        let transporter = nodemailer_1.default.createTransport({
+            host: "smtp.ethereal.email",
+            port: 587,
+            secure: false,
+            auth: {
+                user: testAccount.user,
+                pass: testAccount.pass, // generated ethereal password
+            },
+        });
+        // send mail with defined transport object
+        let info = yield transporter.sendMail({
+            from: '"Fred Foo 👻" <foo@example.com>',
+            to: "quachhengtony@gmail.com",
+            subject: "You have been invited to join an organization",
+            text: "Link to join: http://localhost:5000/api/v1/organizations/members/join", // plain text body
+            // html: "<b>Hello world?</b>", // html body
+        });
+        console.log("Message sent: %s", info.messageId);
+        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+        // Preview only available when sending through an Ethereal account
+        console.log("Preview URL: %s", nodemailer_1.default.getTestMessageUrl(info));
+        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+    }
+    catch (err) {
+        throw new error_response_exception_1.default("Fail to send inviatation via email", 500);
+    }
+});

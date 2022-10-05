@@ -9,11 +9,15 @@ const role_guard_middleware_1 = __importDefault(require("../middleware/role-guar
 const route_guard_middleware_1 = __importDefault(require("../middleware/route-guard.middleware"));
 const orgRouter = express_1.default.Router();
 orgRouter
+    .route("/")
+    .get(route_guard_middleware_1.default, (0, role_guard_middleware_1.default)("MEMBER", "OWNER"), organization_controller_1.retrieveOrgs)
+    .post(route_guard_middleware_1.default, (0, role_guard_middleware_1.default)("OWNER"), organization_controller_1.createOrg);
+orgRouter
     .route("/:orgId")
     .get(route_guard_middleware_1.default, (0, role_guard_middleware_1.default)("MEMBER", "OWNER"), organization_controller_1.retrieveOrg)
     .delete(route_guard_middleware_1.default, (0, role_guard_middleware_1.default)("MEMBER", "OWNER"), organization_controller_1.deleteOrg);
 orgRouter
-    .route("/")
-    .get(route_guard_middleware_1.default, (0, role_guard_middleware_1.default)("MEMBER", "OWNER"), organization_controller_1.retrieveOrgs)
-    .post(route_guard_middleware_1.default, (0, role_guard_middleware_1.default)("OWNER"), organization_controller_1.createOrg);
+    .route("/members/invite")
+    .post(route_guard_middleware_1.default, (0, role_guard_middleware_1.default)("MEMBER", "OWNER"), organization_controller_1.inviteMember);
+orgRouter.route("/members/join").get(route_guard_middleware_1.default, organization_controller_1.joinOrg);
 exports.default = orgRouter;

@@ -14,33 +14,35 @@ enum UserType {
 }
 
 model User {
-  id                String              @id @default(uuid())
-  login             String              @unique
-  avatarUrl         String
-  name              String
-  location          String
-  email             String              @unique
-  bio               String
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  type              UserType            @default(USER)
-  UserOrganization  UserOrganization[]
-  UserTeam          UserTeam[]
-  OwnerOrganization OwnerOrganization[]
+  id                      String                    @id @default(uuid())
+  login                   String                    @unique
+  avatarUrl               String
+  name                    String
+  location                String
+  email                   String                    @unique
+  bio                     String
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  type                    UserType                  @default(USER)
+  UserOrganization        UserOrganization[]
+  UserTeam                UserTeam[]
+  OwnerOrganization       OwnerOrganization[]
+  OrganizationInviatation OrganizationInviatation[]
 
   @@map("tblUser")
 }
 
 model Organization {
-  id                String              @id @default(uuid())
-  login             String              @unique
-  name              String
-  description       String
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  UserOrganization  UserOrganization[]
-  TeamOrganization  TeamOrganization[]
-  OwnerOrganization OwnerOrganization[]
+  id                      String                    @id @default(uuid())
+  login                   String                    @unique
+  name                    String
+  description             String
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  UserOrganization        UserOrganization[]
+  TeamOrganization        TeamOrganization[]
+  OwnerOrganization       OwnerOrganization[]
+  OrganizationInviatation OrganizationInviatation[]
 
   @@map("tblOrganization")
 }
@@ -103,4 +105,16 @@ model OwnerOrganization {
   updatedAt      DateTime     @updatedAt
 
   @@map("tblOwnerOrganization")
+}
+
+model OrganizationInviatation {
+  id             String       @id @default(uuid())
+  userId         String
+  organizationId String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("tblOrganizationInviatation")
 }

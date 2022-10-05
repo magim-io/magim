@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { get } from "lodash";
 import asyncHanlder from "../middleware/async-handler.middleware";
 import * as orgService from "../services/organization.service";
 
@@ -99,4 +100,67 @@ const deleteOrg = asyncHanlder(
   }
 );
 
-export { createOrg, retrieveOrg, retrieveOrgs, deleteOrg };
+const inviteMember = asyncHanlder(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const memberEmail = req.body["memberEmail"];
+    const orgId = req.body["organizationId"];
+    const user = req.user;
+    let member;
+
+    if (user && memberEmail && orgId) {
+      const type = user.type;
+
+      switch (type) {
+        case "MEMBER":
+          member = await orgService.inviteMember({
+            user: user,
+            memberEmail: memberEmail,
+            organizationId: orgId,
+            isOwner: false,
+          });
+          break;
+
+        case "OWNER":
+          member = await orgService.inviteMember({
+            user: user,
+            memberEmail: memberEmail,
+            organizationId: orgId,
+            isOwner: true,
+          });
+          break;
+      }
+    }
+    res.status(201).json({ success: true, data: member });
+  }
+);
+
+const joinOrg = asyncHanlder(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+    const invId = get(req, "query.inv");
+    const orgId = get(req, "query.org");
+    let joinedOrg;
+
+    if (user && invId && orgId) {
+      joinedOrg = await orgService.joinOrg({
+        inviatationId: invId,
+        user: user,
+        organizationId: orgId,
+      });
+    }
+
+    res.status(201).json({
+      success: true,
+      data: joinedOrg,
+    });
+  }
+);
+
+export {
+  createOrg,
+  retrieveOrg,
+  retrieveOrgs,
+  deleteOrg,
+  inviteMember,
+  joinOrg,
+};

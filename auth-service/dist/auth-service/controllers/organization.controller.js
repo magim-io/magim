@@ -35,7 +35,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteOrg = exports.retrieveOrgs = exports.retrieveOrg = exports.createOrg = void 0;
+exports.joinOrg = exports.inviteMember = exports.deleteOrg = exports.retrieveOrgs = exports.retrieveOrg = exports.createOrg = void 0;
+const lodash_1 = require("lodash");
 const async_handler_middleware_1 = __importDefault(require("../middleware/async-handler.middleware"));
 const orgService = __importStar(require("../services/organization.service"));
 const createOrg = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -115,3 +116,50 @@ const deleteOrg = (0, async_handler_middleware_1.default)((req, res, next) => __
     });
 }));
 exports.deleteOrg = deleteOrg;
+const inviteMember = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const memberEmail = req.body["memberEmail"];
+    const orgId = req.body["organizationId"];
+    const user = req.user;
+    let member;
+    if (user && memberEmail && orgId) {
+        const type = user.type;
+        switch (type) {
+            case "MEMBER":
+                member = yield orgService.inviteMember({
+                    user: user,
+                    memberEmail: memberEmail,
+                    organizationId: orgId,
+                    isOwner: false,
+                });
+                break;
+            case "OWNER":
+                member = yield orgService.inviteMember({
+                    user: user,
+                    memberEmail: memberEmail,
+                    organizationId: orgId,
+                    isOwner: true,
+                });
+                break;
+        }
+    }
+    res.status(201).json({ success: true, data: member });
+}));
+exports.inviteMember = inviteMember;
+const joinOrg = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const invId = (0, lodash_1.get)(req, "query.inv");
+    const orgId = (0, lodash_1.get)(req, "query.org");
+    let joinedOrg;
+    if (user && invId && orgId) {
+        joinedOrg = yield orgService.joinOrg({
+            inviatationId: invId,
+            user: user,
+            organizationId: orgId,
+        });
+    }
+    res.status(201).json({
+        success: true,
+        data: joinedOrg,
+    });
+}));
+exports.joinOrg = joinOrg;
