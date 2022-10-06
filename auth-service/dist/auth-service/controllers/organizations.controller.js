@@ -38,7 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.joinOrg = exports.inviteMember = exports.deleteOrg = exports.retrieveOrgs = exports.retrieveOrg = exports.createOrg = void 0;
 const lodash_1 = require("lodash");
 const async_handler_middleware_1 = __importDefault(require("../middleware/async-handler.middleware"));
-const orgService = __importStar(require("../services/organization.service"));
+const orgService = __importStar(require("../services/organizations.service"));
 const createOrg = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const orgDto = req.body;
     let org;

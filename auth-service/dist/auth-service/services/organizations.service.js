@@ -89,7 +89,7 @@ const deleteOrg = ({ organizationId, owner, }) => __awaiter(void 0, void 0, void
         if (!org) {
             throw new error_response_exception_1.default("Fail to find organization with this id", 404);
         }
-        return yield prisma.organization.delete({
+        yield prisma.organization.delete({
             where: {
                 id: organizationId,
             },
@@ -130,7 +130,7 @@ const inviteMember = ({ user, memberEmail, organizationId, }) => __awaiter(void 
         if (inviatation) {
             sendEmail();
         }
-        return newMember;
+        return inviatation;
     }
     catch (err) {
         throw new error_response_exception_1.default("Fail to invite member to organization", 500);

@@ -1,8 +1,10 @@
 import {
   Organization,
+  OrganizationInviatation,
   OwnerOrganization,
   PrismaClient,
   User,
+  UserOrganization,
 } from "@prisma/client";
 import ErrorResponse from "../../common/exceptions/error-response.exception";
 import nodemailer from "nodemailer";
@@ -28,6 +30,13 @@ const createOrg = async ({
       },
     });
 
+    await prisma.userOrganization.create({
+      data: {
+        organizationId: org.id,
+        userId: owner.id,
+      },
+    });
+
     return org;
   } catch (err) {
     throw new ErrorResponse("Fail to create new organization", 500);
@@ -36,38 +45,22 @@ const createOrg = async ({
 
 const retrieveOrg = async ({
   user,
-  isOwner,
   organizationId,
 }: {
   user: User;
-  isOwner: boolean;
   organizationId: string;
 }): Promise<any> => {
   try {
     let orgs;
-    switch (isOwner) {
-      case true:
-        orgs = prisma.ownerOrganization.findFirst({
-          where: {
-            organizationId: organizationId,
-          },
-          include: {
-            organization: true,
-          },
-        });
-        break;
 
-      case false:
-        orgs = prisma.userOrganization.findFirst({
-          where: {
-            organizationId: organizationId,
-          },
-          include: {
-            organization: true,
-          },
-        });
-        break;
-    }
+    orgs = prisma.userOrganization.findFirst({
+      where: {
+        organizationId: organizationId,
+      },
+      include: {
+        organization: true,
+      },
+    });
 
     return orgs;
   } catch (err) {
@@ -75,38 +68,18 @@ const retrieveOrg = async ({
   }
 };
 
-const retrieveOrgs = async ({
-  user,
-  isOwner,
-}: {
-  user: User;
-  isOwner: boolean;
-}): Promise<any> => {
+const retrieveOrgs = async ({ user }: { user: User }): Promise<any> => {
   try {
     let orgs;
-    switch (isOwner) {
-      case true:
-        orgs = prisma.ownerOrganization.findMany({
-          where: {
-            ownerId: user.id,
-          },
-          include: {
-            organization: true,
-          },
-        });
-        break;
 
-      case false:
-        orgs = prisma.userOrganization.findMany({
-          where: {
-            userId: user.id,
-          },
-          include: {
-            organization: true,
-          },
-        });
-        break;
-    }
+    orgs = prisma.userOrganization.findMany({
+      where: {
+        userId: user.id,
+      },
+      include: {
+        organization: true,
+      },
+    });
 
     return orgs;
   } catch (err) {
@@ -120,7 +93,7 @@ const deleteOrg = async ({
 }: {
   organizationId: string;
   owner: User;
-}): Promise<any> => {
+}): Promise<void> => {
   try {
     let org;
 
@@ -135,8 +108,7 @@ const deleteOrg = async ({
       throw new ErrorResponse("Fail to find organization with this id", 404);
     }
 
-    console.log("org", org);
-    return await prisma.organization.delete({
+    await prisma.organization.delete({
       where: {
         id: organizationId,
       },
@@ -150,71 +122,37 @@ const inviteMember = async ({
   user,
   memberEmail,
   organizationId,
-  isOwner,
 }: {
   user: User;
   memberEmail: string;
   organizationId: string;
-  isOwner: boolean;
-}): Promise<any> => {
+}): Promise<OrganizationInviatation> => {
   try {
     let inviterOrg;
     let newMember;
 
-    switch (isOwner) {
-      case true:
-        inviterOrg = await prisma.ownerOrganization.findFirst({
-          where: {
-            ownerId: user.id,
-            organizationId: organizationId,
-          },
-        });
+    inviterOrg = await prisma.userOrganization.findFirst({
+      where: {
+        userId: user.id,
+        organizationId: organizationId,
+      },
+    });
 
-        if (!inviterOrg) {
-          throw new ErrorResponse(
-            "Inviter does not belong to the organization",
-            403
-          );
-        }
+    if (!inviterOrg) {
+      throw new ErrorResponse(
+        "Inviter does not belong to the organization",
+        403
+      );
+    }
 
-        newMember = await prisma.user.findFirst({
-          where: {
-            email: memberEmail,
-          },
-        });
+    newMember = await prisma.user.findFirst({
+      where: {
+        email: memberEmail,
+      },
+    });
 
-        if (!newMember) {
-          throw new ErrorResponse("Fail to find member to invite", 404);
-        }
-
-        break;
-
-      case false:
-        inviterOrg = await prisma.userOrganization.findFirst({
-          where: {
-            userId: user.id,
-            organizationId: organizationId,
-          },
-        });
-
-        if (!inviterOrg) {
-          throw new ErrorResponse(
-            "Inviter does not belong to the organization",
-            403
-          );
-        }
-
-        newMember = await prisma.user.findFirst({
-          where: {
-            email: memberEmail,
-          },
-        });
-
-        if (!newMember) {
-          throw new ErrorResponse("Fail to find member to invite", 404);
-        }
-
-        break;
+    if (!newMember) {
+      throw new ErrorResponse("Fail to find member to invite", 404);
     }
 
     const inviatation = await prisma.organizationInviatation.create({
@@ -228,7 +166,7 @@ const inviteMember = async ({
       sendEmail();
     }
 
-    return newMember;
+    return inviatation;
   } catch (err) {
     throw new ErrorResponse("Fail to invite member to organization", 500);
   }
@@ -242,11 +180,12 @@ const joinOrg = async ({
   user: User;
   organizationId: string;
   inviatationId: string;
-}) => {
+}): Promise<UserOrganization> => {
   try {
     const inviatation = await prisma.organizationInviatation.findFirst({
       where: {
         id: inviatationId,
+        // userId: user.id
       },
     });
 

@@ -10,7 +10,8 @@ const error_handler_middleware_1 = __importDefault(require("./middleware/error-h
 const config_1 = __importDefault(require("./config/config"));
 const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const organization_route_1 = __importDefault(require("./routes/organization.route"));
+const organizations_route_1 = __importDefault(require("./routes/organizations.route"));
+const teams_route_1 = __importDefault(require("./routes/teams.route"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
@@ -19,7 +20,8 @@ if (config_1.default.ENV === "development") {
     app.use((0, morgan_1.default)("dev"));
 }
 app.use("/api/auth/github", auth_route_1.default);
-app.use("/api/v1/organizations", organization_route_1.default);
+app.use("/api/v1/organizations", organizations_route_1.default);
+app.use("/api/v1/teams", teams_route_1.default);
 app.use(error_handler_middleware_1.default);
 const server = app.listen(config_1.default.SERVER.PORT, () => {
     console.log(`Server running in ${config_1.default.ENV} mode on port ${config_1.default.SERVER.PORT}`);

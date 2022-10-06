@@ -6,7 +6,7 @@ import {
   deleteOrg,
   inviteMember,
   joinOrg,
-} from "../controllers/organization.controller";
+} from "../controllers/organizations.controller";
 import roleGuard from "../middleware/role-guard.middleware";
 import routeGuard from "../middleware/route-guard.middleware";
 
