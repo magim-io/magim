@@ -35,42 +35,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.joinTeam = exports.createTeam = void 0;
-const lodash_1 = require("lodash");
+exports.createDomain = void 0;
 const async_handler_middleware_1 = __importDefault(require("../middleware/async-handler.middleware"));
-const teamService = __importStar(require("../services/teams.service"));
-const createTeam = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const domainService = __importStar(require("../services/domains.service"));
+const createDomain = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    let domain;
+    const domainDto = req.body;
     const user = req.user;
-    const teamDto = req.body;
-    let team;
-    if (user && teamDto) {
-        team = yield teamService.createTeam({
-            team: teamDto.payload,
-            organizationId: teamDto.organizationId,
+    if (user) {
+        domain = yield domainService.createDomain({
             user: user,
+            domain: domainDto.payload,
+            teamId: domainDto.teamId,
         });
     }
     res.status(201).json({
         success: true,
-        data: team,
+        data: domain,
     });
 }));
-exports.createTeam = createTeam;
-const joinTeam = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = req.user;
-    const teamId = (0, lodash_1.get)(req, "query.team");
-    const orgId = (0, lodash_1.get)(req, "query.org");
-    let joined;
-    if (user && orgId && teamId) {
-        joined = yield teamService.joinTeam({
-            user: user,
-            organizationId: orgId,
-            teamId: teamId,
-        });
-    }
-    res.status(201).json({
-        success: true,
-        data: joined,
-    });
-}));
-exports.joinTeam = joinTeam;
+exports.createDomain = createDomain;

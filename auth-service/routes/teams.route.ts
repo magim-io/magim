@@ -6,6 +6,6 @@ import routeGuard from "../middleware/route-guard.middleware";
 const teamRouter = express.Router();
 
 teamRouter.route("/").post(routeGuard, createTeam);
-teamRouter.route("/:teamId").post(routeGuard, joinTeam);
+teamRouter.route("/members/join").post(routeGuard, joinTeam);
 
 export default teamRouter;

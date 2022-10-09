@@ -16,32 +16,16 @@ exports.joinTeam = exports.createTeam = void 0;
 const client_1 = require("@prisma/client");
 const error_response_exception_1 = __importDefault(require("../../common/exceptions/error-response.exception"));
 const prisma = new client_1.PrismaClient();
-const createTeam = ({ team, user, organizationId, isOwner, }) => __awaiter(void 0, void 0, void 0, function* () {
+const createTeam = ({ team, user, organizationId, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let org;
         let newTeam;
-        switch (isOwner) {
-            case true:
-                org = prisma.ownerOrganization.findMany({
-                    where: {
-                        ownerId: user.id,
-                    },
-                    include: {
-                        organization: true,
-                    },
-                });
-                break;
-            case false:
-                org = prisma.userOrganization.findMany({
-                    where: {
-                        userId: user.id,
-                    },
-                    include: {
-                        organization: true,
-                    },
-                });
-                break;
-        }
+        org = prisma.userOrganization.findMany({
+            where: {
+                userId: user.id,
+                organizationId: organizationId,
+            },
+        });
         if (!org) {
             throw new error_response_exception_1.default("User does not have access to this route", 403);
         }

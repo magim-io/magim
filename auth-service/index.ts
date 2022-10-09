@@ -7,6 +7,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import orgRouter from "./routes/organizations.route";
 import teamRouter from "./routes/teams.route";
+import domainRouter from "./routes/domains.route";
 
 const app: Express = express();
 
@@ -21,6 +22,7 @@ if (CONFIG.ENV === "development") {
 app.use("/api/auth/github", authRouter);
 app.use("/api/v1/organizations", orgRouter);
 app.use("/api/v1/teams", teamRouter);
+app.use("/api/v1/domains", domainRouter);
 
 app.use(errorHandler);
 

@@ -7,40 +7,21 @@ const createTeam = async ({
   team,
   user,
   organizationId,
-  isOwner,
 }: {
   team: Team;
   user: User;
   organizationId: string;
-  isOwner: boolean;
 }): Promise<Team> => {
   try {
     let org;
     let newTeam;
 
-    switch (isOwner) {
-      case true:
-        org = prisma.ownerOrganization.findMany({
-          where: {
-            ownerId: user.id,
-          },
-          include: {
-            organization: true,
-          },
-        });
-        break;
-
-      case false:
-        org = prisma.userOrganization.findMany({
-          where: {
-            userId: user.id,
-          },
-          include: {
-            organization: true,
-          },
-        });
-        break;
-    }
+    org = prisma.userOrganization.findMany({
+      where: {
+        userId: user.id,
+        organizationId: organizationId,
+      },
+    });
 
     if (!org) {
       throw new ErrorResponse("User does not have access to this route", 403);

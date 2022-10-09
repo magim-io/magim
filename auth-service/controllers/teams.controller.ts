@@ -7,15 +7,13 @@ const createTeam = asyncHanlder(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
     const teamDto = req.body;
-    const orgId = get(req, "query.orgId");
     let team;
 
-    if (user && teamDto && orgId) {
+    if (user && teamDto) {
       team = await teamService.createTeam({
-        team: teamDto,
-        organizationId: orgId,
+        team: teamDto.payload,
+        organizationId: teamDto.organizationId,
         user: user,
-        isOwner: true,
       });
     }
 
@@ -29,8 +27,8 @@ const createTeam = asyncHanlder(
 const joinTeam = asyncHanlder(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
-    const teamId = req.params["teamId"];
-    const orgId = get(req, "query.orgId");
+    const teamId = get(req, "query.team");
+    const orgId = get(req, "query.org");
     let joined;
 
     if (user && orgId && teamId) {

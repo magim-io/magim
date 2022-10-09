@@ -28,6 +28,7 @@ model User {
   UserTeam                UserTeam[]
   OwnerOrganization       OwnerOrganization[]
   OrganizationInviatation OrganizationInviatation[]
+  Domain                  Domain[]
 
   @@map("tblUser")
 }
@@ -55,6 +56,7 @@ model Team {
   updatedAt        DateTime           @updatedAt
   UserTeam         UserTeam[]
   TeamOrganization TeamOrganization[]
+  TeamDomain       TeamDomain[]
 
   @@map("tblTeam")
 }
@@ -117,4 +119,29 @@ model OrganizationInviatation {
   updatedAt      DateTime     @updatedAt
 
   @@map("tblOrganizationInviatation")
+}
+
+model Domain {
+  id      String @id @default(uuid())
+  name    String
+  ownerId String
+
+  owner      User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  TeamDomain TeamDomain[]
+
+  @@map("tblDomain")
+}
+
+model TeamDomain {
+  id        String   @id @default(uuid())
+  teamId    String
+  domainId  String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  domain    Domain   @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tblTeamDomain")
 }
