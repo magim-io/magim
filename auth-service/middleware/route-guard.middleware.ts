@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import asyncHanlder from "./async-handler.middleware";
-import ErrorResponse from "../../common/exceptions/error-response.exception";
+import ErrorResponse from "../../lib/exceptions/error-response.exception";
 import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import CONFIG from "../config/config";
@@ -18,9 +18,9 @@ const routeGuard = asyncHanlder(
       token = req.headers.authorization.split(" ")[1];
     }
 
-    if (req.cookies.mgt) {
-      token = req.cookies.mgt;
-    }
+    // if (req.cookies.mgt) {
+    //   token = req.cookies.mgt;
+    // }
 
     if (!token) {
       return next(

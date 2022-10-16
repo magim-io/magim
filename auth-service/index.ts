@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import orgRouter from "./routes/organizations.route";
 import teamRouter from "./routes/teams.route";
 import domainRouter from "./routes/domains.route";
+import eventRouter from "./routes/events.route";
 
 const app: Express = express();
 
@@ -23,7 +24,7 @@ app.use("/api/auth/github", authRouter);
 app.use("/api/v1/organizations", orgRouter);
 app.use("/api/v1/teams", teamRouter);
 app.use("/api/v1/domains", domainRouter);
-
+app.use("/api/v1/events", eventRouter);
 app.use(errorHandler);
 
 const server = app.listen(CONFIG.SERVER.PORT, () => {

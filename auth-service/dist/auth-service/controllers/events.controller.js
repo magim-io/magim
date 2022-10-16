@@ -35,35 +35,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginWithGithub = void 0;
-const error_response_exception_1 = __importDefault(require("../../lib/exceptions/error-response.exception"));
+exports.installDependencyMapAction = void 0;
 const async_handler_middleware_1 = __importDefault(require("../middleware/async-handler.middleware"));
-const authService = __importStar(require("../services/auth.service"));
-const lodash_1 = require("lodash");
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const config_1 = __importDefault(require("../config/config"));
-const loginWithGithub = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const code = (0, lodash_1.get)(req, "query.code");
-    const path = (0, lodash_1.get)(req, "query.path", "/");
-    // authService.retrieveInstallations();
-    if (!code) {
-        return next(new error_response_exception_1.default("Github code is missing", 401));
+const eventService = __importStar(require("../services/events.service"));
+const installDependencyMapAction = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const installationId = req.body.installation.id;
+    const action = req.body.action;
+    if (action === "created") {
+        yield eventService.installDependencyMapAction({
+            installationId: installationId,
+            branch: "main",
+            owner: "f-plms",
+            reference: "refs/heads/main",
+            repository: "hunterrank",
+        });
     }
-    const githubUser = yield authService.retrieveGithubUser({
-        code,
-    });
-    const user = yield authService.loginWithGithub({
-        user: githubUser,
-    });
-    if (user !== null) {
-        if (!!config_1.default.SERVER.JWT_SECRET) {
-            const token = jsonwebtoken_1.default.sign(user, config_1.default.SERVER.JWT_SECRET);
-            res.cookie(config_1.default.SERVER.COOKIE_NAME, token, {
-                // httpOnly: true,
-                domain: `localhost`,
-            });
-        }
-    }
-    res.redirect(`http://localhost:${config_1.default.WEB.PORT}`);
 }));
-exports.loginWithGithub = loginWithGithub;
+exports.installDependencyMapAction = installDependencyMapAction;

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const error_response_exception_1 = __importDefault(require("../../common/exceptions/error-response.exception"));
+const error_response_exception_1 = __importDefault(require("../../lib/exceptions/error-response.exception"));
 const roleGuard = (...roles) => {
     return (req, res, next) => {
         if (req.user !== undefined) {

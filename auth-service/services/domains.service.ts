@@ -1,5 +1,5 @@
 import { PrismaClient, Team, User, UserTeam, Domain } from "@prisma/client";
-import ErrorResponse from "../../common/exceptions/error-response.exception";
+import ErrorResponse from "../../lib/exceptions/error-response.exception";
 
 const prisma = new PrismaClient();
 
@@ -9,13 +9,15 @@ const createDomain = async ({
   teamId,
 }: {
   user: User;
-  domain: { name: string };
+  domain: { name: string; repository: string; directory: string };
   teamId: string;
 }): Promise<Domain> => {
   try {
     const newDomain: Domain = await prisma.domain.create({
       data: {
         name: domain.name,
+        repository: domain.repository,
+        directory: domain.directory,
         ownerId: user.id,
       },
     });

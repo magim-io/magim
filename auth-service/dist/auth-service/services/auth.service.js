@@ -16,7 +16,7 @@ exports.loginWithGithub = exports.retrieveGithubUser = void 0;
 const config_1 = __importDefault(require("../config/config"));
 const axios_1 = __importDefault(require("axios"));
 const query_string_1 = __importDefault(require("query-string"));
-const error_response_exception_1 = __importDefault(require("../../common/exceptions/error-response.exception"));
+const error_response_exception_1 = __importDefault(require("../../lib/exceptions/error-response.exception"));
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const retrieveGithubUser = ({ code, }) => __awaiter(void 0, void 0, void 0, function* () {

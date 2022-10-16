@@ -13,6 +13,11 @@ enum UserType {
   OWNER
 }
 
+enum MapType {
+  DEPENDENCY
+  CONTROL_FLOW
+}
+
 model User {
   id                      String                    @id @default(uuid())
   login                   String                    @unique
@@ -122,14 +127,16 @@ model OrganizationInviatation {
 }
 
 model Domain {
-  id      String @id @default(uuid())
-  name    String
-  ownerId String
-
+  id         String       @id @default(uuid())
+  name       String
+  repository String       @default("")
+  directory  String       @default("")
+  ownerId    String
   owner      User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   TeamDomain TeamDomain[]
+  Map        Map[]
 
   @@map("tblDomain")
 }
@@ -144,4 +151,17 @@ model TeamDomain {
   updatedAt DateTime @updatedAt
 
   @@map("tblTeamDomain")
+}
+
+model Map {
+  id        String   @id @default(uuid())
+  version   String
+  payload   String
+  type      MapType
+  domainId  String
+  domain    Domain   @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tblMap")
 }

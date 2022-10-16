@@ -13,6 +13,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const organizations_route_1 = __importDefault(require("./routes/organizations.route"));
 const teams_route_1 = __importDefault(require("./routes/teams.route"));
 const domains_route_1 = __importDefault(require("./routes/domains.route"));
+const events_route_1 = __importDefault(require("./routes/events.route"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
@@ -24,6 +25,7 @@ app.use("/api/auth/github", auth_route_1.default);
 app.use("/api/v1/organizations", organizations_route_1.default);
 app.use("/api/v1/teams", teams_route_1.default);
 app.use("/api/v1/domains", domains_route_1.default);
+app.use("/api/v1/events", events_route_1.default);
 app.use(error_handler_middleware_1.default);
 const server = app.listen(config_1.default.SERVER.PORT, () => {
     console.log(`Server running in ${config_1.default.ENV} mode on port ${config_1.default.SERVER.PORT}`);

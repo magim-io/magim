@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import ErrorResponse from "../../common/exceptions/error-response.exception";
+import ErrorResponse from "../../lib/exceptions/error-response.exception";
 import asyncHanlder from "../middleware/async-handler.middleware";
 import * as authService from "../services/auth.service";
 import { get } from "lodash";
@@ -11,6 +11,8 @@ const loginWithGithub = asyncHanlder(
   async (req: Request, res: Response, next: NextFunction) => {
     const code = get(req, "query.code");
     const path = get(req, "query.path", "/");
+
+    // authService.retrieveInstallations();
 
     if (!code) {
       return next(new ErrorResponse("Github code is missing", 401));
@@ -28,7 +30,7 @@ const loginWithGithub = asyncHanlder(
       if (!!CONFIG.SERVER.JWT_SECRET) {
         const token = jwt.sign(user, CONFIG.SERVER.JWT_SECRET);
         res.cookie(CONFIG.SERVER.COOKIE_NAME, token, {
-          httpOnly: true,
+          // httpOnly: true,
           domain: `localhost`,
         });
       }

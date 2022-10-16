@@ -1,5 +1,5 @@
 import { PrismaClient, Team, User, UserTeam } from "@prisma/client";
-import ErrorResponse from "../../common/exceptions/error-response.exception";
+import ErrorResponse from "../../lib/exceptions/error-response.exception";
 
 const prisma = new PrismaClient();
 

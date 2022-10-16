@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.joinTeam = exports.createTeam = void 0;
 const client_1 = require("@prisma/client");
-const error_response_exception_1 = __importDefault(require("../../common/exceptions/error-response.exception"));
+const error_response_exception_1 = __importDefault(require("../../lib/exceptions/error-response.exception"));
 const prisma = new client_1.PrismaClient();
 const createTeam = ({ team, user, organizationId, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {

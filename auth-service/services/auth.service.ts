@@ -2,7 +2,7 @@ import CONFIG from "../config/config";
 import axios from "axios";
 import querystring from "query-string";
 import { GithubUser } from "../models/github-user.model";
-import ErrorResponse from "../../common/exceptions/error-response.exception";
+import ErrorResponse from "../../lib/exceptions/error-response.exception";
 import { PrismaClient, User } from "@prisma/client";
 
 const prisma = new PrismaClient();

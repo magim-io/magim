@@ -6,7 +6,7 @@ import {
   User,
   UserOrganization,
 } from "@prisma/client";
-import ErrorResponse from "../../common/exceptions/error-response.exception";
+import ErrorResponse from "../../lib/exceptions/error-response.exception";
 import nodemailer from "nodemailer";
 
 const prisma = new PrismaClient();

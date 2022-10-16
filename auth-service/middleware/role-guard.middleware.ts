@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import ErrorResponse from "../../common/exceptions/error-response.exception";
+import ErrorResponse from "../../lib/exceptions/error-response.exception";
 
 const roleGuard = (...roles: any[]) => {
   return (req: Request, res: Response, next: NextFunction) => {

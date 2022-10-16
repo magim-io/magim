@@ -13,6 +13,8 @@ dotenv_1.default.config({ path: "../env/config.env" });
     "JWT_SECRET",
     "COOKIE_NAME",
     "MAGIM_WEB_PORT",
+    "GITHUB_APP_SECRET",
+    "GITHUB_APP_ID",
 ].forEach((name) => {
     if (!process.env[name]) {
         throw new Error(`Error: environment variable ${name} is missing`);
@@ -29,8 +31,15 @@ const CONFIG = {
         PORT: process.env.MAGIM_WEB_PORT,
     },
     GITHUB: {
+        APP_ID: process.env.GITHUB_APP_ID,
         CLIENT_ID: process.env.GITHUB_CLIENT_ID,
         CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+        APP_SECRET: process.env.GITHUB_APP_SECRET,
     },
 };
+Object.values(CONFIG).forEach((value) => {
+    if (value === undefined) {
+        throw new Error(`Error: undefined environment variable found`);
+    }
+});
 exports.default = CONFIG;
