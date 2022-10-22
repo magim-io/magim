@@ -1,5 +1,6 @@
 import { PrismaClient, Team, User, UserTeam, Domain } from "@prisma/client";
-import ErrorResponse from "../../lib/exceptions/error-response.exception";
+import Api403Error from "../../lib/errors/api-403.error";
+import Api500Error from "../../lib/errors/api-500.error";
 
 const prisma = new PrismaClient();
 
@@ -30,7 +31,7 @@ const createDomain = async ({
     });
 
     if (!team) {
-      throw new ErrorResponse("User does not have access to this team", 403);
+      throw new Api403Error("User does not have access to this team");
     }
 
     await prisma.teamDomain.create({
@@ -42,7 +43,7 @@ const createDomain = async ({
 
     return newDomain;
   } catch (err) {
-    throw new ErrorResponse("Fail to create domain", 500);
+    throw new Api500Error("Fail to create domain");
   }
 };
 

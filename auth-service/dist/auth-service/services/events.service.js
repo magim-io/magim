@@ -15,76 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.installDependencyMapAction = void 0;
 const auth_app_1 = require("@octokit/auth-app");
 const axios_1 = __importDefault(require("axios"));
-const error_response_exception_1 = __importDefault(require("../../lib/exceptions/error-response.exception"));
+const api_500_error_1 = __importDefault(require("../../lib/errors/api-500.error"));
 const config_1 = __importDefault(require("../config/config"));
 const fs_helper_1 = require("../helpers/fs.helper");
 const installDependencyMapAction = ({ installationId, branch, owner, repository, reference, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // const fileContent = await readFile({
-        //   filePath: "../../../../lib/actions/magim-dependencymap.yml",
-        // });
-        // if (
-        //   CONFIG.GITHUB.APP_SECRET === undefined ||
-        //   CONFIG.GITHUB.APP_ID === undefined
-        // ) {
-        //   return;
-        // }
-        // const auth = createAppAuth({
-        //   appId: CONFIG.GITHUB.APP_ID,
-        //   privateKey: CONFIG.GITHUB.APP_SECRET,
-        //   installationId: installationId,
-        //   clientId: CONFIG.GITHUB.CLIENT_ID,
-        //   clientSecret: CONFIG.GITHUB.CLIENT_SECRET,
-        // });
-        // const { token } = await auth({
-        //   type: "installation",
-        //   installationId: installationId,
-        // });
-        // console.log("\ntoken", token);
-        // const lastCommit = await retrieveLastCommitFromBranch({
-        //   branch: "main",
-        //   owner: "magim-io",
-        //   repo: "hunterrank",
-        //   token: token,
-        // });
-        // console.log("\nlastCommit", lastCommit.data.commit.sha);
-        // const blob = await createActionBlob({
-        //   owner: "magim-io",
-        //   repo: "hunterrank",
-        //   content: fileContent.toString(),
-        //   token: token,
-        // });
-        // console.log("\nblob", blob.data);
-        // const tree = await createTreeObject({
-        //   owner: "magim-io",
-        //   repo: "hunterrank",
-        //   token: token,
-        //   baseTree: lastCommit.data.commit.sha,
-        //   tree: {
-        //     sha: blob.data["sha"],
-        //     mode: "100644",
-        //     path: ".github/workflows/magim-dependencymap.yml",
-        //     type: "blob",
-        //   },
-        // });
-        // console.log("\ntree", tree.data);
-        // const commit = await createCommit({
-        //   owner: "magim-io",
-        //   repo: "hunterrank",
-        //   message: "install magim dependencymap workflow",
-        //   token: token,
-        //   tree: tree.data["sha"],
-        //   parents: [lastCommit.data.commit.sha],
-        // });
-        // console.log("\ncommit", commit.data);
-        // const ref = await updateReference({
-        //   owner: "magim-io",
-        //   repo: "hunterrank",
-        //   ref: "refs/heads/main",
-        //   sha: commit.data["sha"],
-        //   token: token,
-        // });
-        // console.log("\nref", ref.data);
         const commitMessage = "install magim dependencymap workflow";
         const fileContent = yield (0, fs_helper_1.readFile)({
             filePath: "../../../../lib/actions/magim-dependencymap.yml",
@@ -151,7 +86,7 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
         console.log("\nref", ref.data);
     }
     catch (err) {
-        throw new error_response_exception_1.default("Fail to install dependency map action", 500);
+        throw new api_500_error_1.default("Fail to install dependency map action");
     }
 });
 exports.installDependencyMapAction = installDependencyMapAction;
@@ -165,7 +100,7 @@ const retrieveLastCommitFromBranch = ({ owner, repo, branch, token, }) => __awai
         return commit;
     }
     catch (err) {
-        throw new error_response_exception_1.default("Fail to retrieve last commit from branch", 500);
+        throw new api_500_error_1.default("Fail to retrieve last commit from branch");
     }
 });
 const createActionBlob = ({ owner, repo, content, token, }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -182,7 +117,7 @@ const createActionBlob = ({ owner, repo, content, token, }) => __awaiter(void 0,
         return blob;
     }
     catch (err) {
-        throw new error_response_exception_1.default("Fail to create blob", 500);
+        throw new api_500_error_1.default("Fail to create blob");
     }
 });
 const createTreeObject = ({ owner, repo, tree, token, baseTree, }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -206,7 +141,7 @@ const createTreeObject = ({ owner, repo, tree, token, baseTree, }) => __awaiter(
         return tree;
     }
     catch (err) {
-        throw new error_response_exception_1.default("Fail to create tree", 500);
+        throw new api_500_error_1.default("Fail to create tree");
     }
 });
 const createCommit = ({ owner, repo, message, tree, token, parents, }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -224,7 +159,7 @@ const createCommit = ({ owner, repo, message, tree, token, parents, }) => __awai
         return commit;
     }
     catch (err) {
-        throw new error_response_exception_1.default("Fail to create commit", 500);
+        throw new api_500_error_1.default("Fail to create commit", 500);
     }
 });
 const createReference = ({ owner, repo, ref, sha, token, }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -241,7 +176,7 @@ const createReference = ({ owner, repo, ref, sha, token, }) => __awaiter(void 0,
         return reference;
     }
     catch (err) {
-        throw new error_response_exception_1.default("Fail to create reference", 500);
+        throw new api_500_error_1.default("Fail to create reference", 500);
     }
 });
 const updateReference = ({ owner, repo, ref, sha, token, }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -258,6 +193,6 @@ const updateReference = ({ owner, repo, ref, sha, token, }) => __awaiter(void 0,
         return reference;
     }
     catch (err) {
-        throw new error_response_exception_1.default("Fail to update reference", 500);
+        throw new api_500_error_1.default("Fail to update reference", 500);
     }
 });

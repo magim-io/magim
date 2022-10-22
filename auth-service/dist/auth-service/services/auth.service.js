@@ -16,7 +16,7 @@ exports.loginWithGithub = exports.retrieveGithubUser = void 0;
 const config_1 = __importDefault(require("../config/config"));
 const axios_1 = __importDefault(require("axios"));
 const query_string_1 = __importDefault(require("query-string"));
-const error_response_exception_1 = __importDefault(require("../../lib/exceptions/error-response.exception"));
+const api_500_error_1 = __importDefault(require("../../lib/errors/api-500.error"));
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const retrieveGithubUser = ({ code, }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -32,7 +32,7 @@ const retrieveGithubUser = ({ code, }) => __awaiter(void 0, void 0, void 0, func
         return user.data;
     }
     catch (err) {
-        throw new error_response_exception_1.default("Failed to retrieve user info from Github", 500);
+        throw new api_500_error_1.default("Failed to retrieve user info from Github");
     }
 });
 exports.retrieveGithubUser = retrieveGithubUser;
@@ -60,7 +60,7 @@ const loginWithGithub = ({ user, }) => __awaiter(void 0, void 0, void 0, functio
         return extUser;
     }
     catch (err) {
-        throw new error_response_exception_1.default("Failed to login user", 500);
+        throw new api_500_error_1.default("Failed to login user");
     }
 });
 exports.loginWithGithub = loginWithGithub;

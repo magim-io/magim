@@ -14,7 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.joinTeam = exports.createTeam = void 0;
 const client_1 = require("@prisma/client");
-const error_response_exception_1 = __importDefault(require("../../lib/exceptions/error-response.exception"));
+const api_403_error_1 = __importDefault(require("../../lib/errors/api-403.error"));
+const api_500_error_1 = __importDefault(require("../../lib/errors/api-500.error"));
 const prisma = new client_1.PrismaClient();
 const createTeam = ({ team, user, organizationId, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -27,7 +28,7 @@ const createTeam = ({ team, user, organizationId, }) => __awaiter(void 0, void 0
             },
         });
         if (!org) {
-            throw new error_response_exception_1.default("User does not have access to this route", 403);
+            throw new api_403_error_1.default("User does not have access to this route");
         }
         newTeam = yield prisma.team.create({
             data: team,
@@ -41,7 +42,7 @@ const createTeam = ({ team, user, organizationId, }) => __awaiter(void 0, void 0
         return newTeam;
     }
     catch (err) {
-        throw new error_response_exception_1.default("Fail to create new team", 500);
+        throw new api_500_error_1.default("Fail to create new team");
     }
 });
 exports.createTeam = createTeam;
@@ -55,7 +56,7 @@ const joinTeam = ({ user, teamId, organizationId, }) => __awaiter(void 0, void 0
             },
         });
         if (!org) {
-            throw new error_response_exception_1.default("User does not have access to this route", 403);
+            throw new api_403_error_1.default("User does not have access to this route");
         }
         team = yield prisma.userTeam.create({
             data: {
@@ -66,7 +67,7 @@ const joinTeam = ({ user, teamId, organizationId, }) => __awaiter(void 0, void 0
         return team;
     }
     catch (err) {
-        throw new error_response_exception_1.default("Fail to join team", 500);
+        throw new api_500_error_1.default("Fail to join team");
     }
 });
 exports.joinTeam = joinTeam;

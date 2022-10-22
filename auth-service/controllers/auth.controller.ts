@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import ErrorResponse from "../../lib/exceptions/error-response.exception";
+import Api401Error from "../../lib/errors/api-401.error";
 import asyncHanlder from "../middleware/async-handler.middleware";
 import * as authService from "../services/auth.service";
 import { get } from "lodash";
@@ -15,7 +15,8 @@ const loginWithGithub = asyncHanlder(
     // authService.retrieveInstallations();
 
     if (!code) {
-      return next(new ErrorResponse("Github code is missing", 401));
+      // return next(new ErrorResponse("Github code is missing", 401));
+      return next(new Api401Error("Github code is missing"));
     }
 
     const githubUser: GithubUser = await authService.retrieveGithubUser({

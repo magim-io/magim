@@ -1,17 +1,29 @@
 import { Request, Response, NextFunction } from "express";
-import ErrorResponse from "../../lib/exceptions/error-response.exception";
+import BaseError from "../../lib/errors/base-error.error";
+import logger from "./logger.middleware";
+
+const logError = (err: BaseError | Error) => {
+  logger.error(err);
+};
+
+const isOperationalError = (err: BaseError | Error) => {
+  if (err instanceof BaseError) {
+    return err.isOperational;
+  }
+  return false;
+};
 
 const errorHandler = (
-  err: ErrorResponse,
+  err: BaseError,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  console.log(`Error: ${err.stack}`);
+  logger.error(err);
   res.status(err.statusCode || 500).json({
     success: false,
     error: err.message || "Server error",
   });
 };
 
-export default errorHandler;
+export { errorHandler, logError, isOperationalError };

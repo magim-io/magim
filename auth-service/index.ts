@@ -1,7 +1,10 @@
 import express, { Express } from "express";
 import authRouter from "./routes/auth.route";
-import morgan from "morgan";
-import errorHandler from "./middleware/error-handler.middleware";
+import {
+  errorHandler,
+  isOperationalError,
+  logError,
+} from "./middleware/error-handler.middleware";
 import CONFIG from "./config/config";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -9,6 +12,7 @@ import orgRouter from "./routes/organizations.route";
 import teamRouter from "./routes/teams.route";
 import domainRouter from "./routes/domains.route";
 import eventRouter from "./routes/events.route";
+import httpLogger from "./middleware/http-logger.middleware";
 
 const app: Express = express();
 
@@ -17,7 +21,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 if (CONFIG.ENV === "development") {
-  app.use(morgan("dev"));
+  // app.use(morgan("dev"));
+  app.use(httpLogger);
 }
 
 app.use("/api/auth/github", authRouter);
@@ -33,7 +38,14 @@ const server = app.listen(CONFIG.SERVER.PORT, () => {
   );
 });
 
-process.on("unhandledRejection", (err: Error, promise) => {
-  console.log(`Error: ${err.message}`);
-  server.close(() => process.exit(1));
+process.on("unhandledRejection", (err, promise) => {
+  throw err;
+});
+
+process.on("uncaughtException", (err) => {
+  logError(err);
+
+  if (!isOperationalError(err)) {
+    server.close(() => process.exit(1));
+  }
 });

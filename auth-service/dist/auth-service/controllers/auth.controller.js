@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loginWithGithub = void 0;
-const error_response_exception_1 = __importDefault(require("../../lib/exceptions/error-response.exception"));
+const api_401_error_1 = __importDefault(require("../../lib/errors/api-401.error"));
 const async_handler_middleware_1 = __importDefault(require("../middleware/async-handler.middleware"));
 const authService = __importStar(require("../services/auth.service"));
 const lodash_1 = require("lodash");
@@ -47,7 +47,8 @@ const loginWithGithub = (0, async_handler_middleware_1.default)((req, res, next)
     const path = (0, lodash_1.get)(req, "query.path", "/");
     // authService.retrieveInstallations();
     if (!code) {
-        return next(new error_response_exception_1.default("Github code is missing", 401));
+        // return next(new ErrorResponse("Github code is missing", 401));
+        return next(new api_401_error_1.default("Github code is missing"));
     }
     const githubUser = yield authService.retrieveGithubUser({
         code,

@@ -14,7 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createDomain = void 0;
 const client_1 = require("@prisma/client");
-const error_response_exception_1 = __importDefault(require("../../lib/exceptions/error-response.exception"));
+const api_403_error_1 = __importDefault(require("../../lib/errors/api-403.error"));
+const api_500_error_1 = __importDefault(require("../../lib/errors/api-500.error"));
 const prisma = new client_1.PrismaClient();
 const createDomain = ({ user, domain, teamId, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -33,7 +34,7 @@ const createDomain = ({ user, domain, teamId, }) => __awaiter(void 0, void 0, vo
             },
         });
         if (!team) {
-            throw new error_response_exception_1.default("User does not have access to this team", 403);
+            throw new api_403_error_1.default("User does not have access to this team");
         }
         yield prisma.teamDomain.create({
             data: {
@@ -44,7 +45,7 @@ const createDomain = ({ user, domain, teamId, }) => __awaiter(void 0, void 0, vo
         return newDomain;
     }
     catch (err) {
-        throw new error_response_exception_1.default("Fail to create domain", 500);
+        throw new api_500_error_1.default("Fail to create domain");
     }
 });
 exports.createDomain = createDomain;

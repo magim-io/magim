@@ -1,5 +1,6 @@
 import { PrismaClient, Team, User, UserTeam } from "@prisma/client";
-import ErrorResponse from "../../lib/exceptions/error-response.exception";
+import Api403Error from "../../lib/errors/api-403.error";
+import Api500Error from "../../lib/errors/api-500.error";
 
 const prisma = new PrismaClient();
 
@@ -24,7 +25,7 @@ const createTeam = async ({
     });
 
     if (!org) {
-      throw new ErrorResponse("User does not have access to this route", 403);
+      throw new Api403Error("User does not have access to this route");
     }
 
     newTeam = await prisma.team.create({
@@ -40,7 +41,7 @@ const createTeam = async ({
 
     return newTeam;
   } catch (err) {
-    throw new ErrorResponse("Fail to create new team", 500);
+    throw new Api500Error("Fail to create new team");
   }
 };
 
@@ -63,7 +64,7 @@ const joinTeam = async ({
     });
 
     if (!org) {
-      throw new ErrorResponse("User does not have access to this route", 403);
+      throw new Api403Error("User does not have access to this route");
     }
 
     team = await prisma.userTeam.create({
@@ -75,7 +76,7 @@ const joinTeam = async ({
 
     return team;
   } catch (err) {
-    throw new ErrorResponse("Fail to join team", 500);
+    throw new Api500Error("Fail to join team");
   }
 };
 

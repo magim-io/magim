@@ -1,6 +1,6 @@
 import { createAppAuth } from "@octokit/auth-app";
 import axios, { AxiosResponse } from "axios";
-import ErrorResponse from "../../lib/exceptions/error-response.exception";
+import Api500Error from "../../lib/errors/api-500.error";
 import CONFIG from "../config/config";
 import { readFile } from "../helpers/fs.helper";
 
@@ -18,83 +18,6 @@ const installDependencyMapAction = async ({
   reference: string;
 }): Promise<void> => {
   try {
-    // const fileContent = await readFile({
-    //   filePath: "../../../../lib/actions/magim-dependencymap.yml",
-    // });
-
-    // if (
-    //   CONFIG.GITHUB.APP_SECRET === undefined ||
-    //   CONFIG.GITHUB.APP_ID === undefined
-    // ) {
-    //   return;
-    // }
-
-    // const auth = createAppAuth({
-    //   appId: CONFIG.GITHUB.APP_ID,
-    //   privateKey: CONFIG.GITHUB.APP_SECRET,
-    //   installationId: installationId,
-    //   clientId: CONFIG.GITHUB.CLIENT_ID,
-    //   clientSecret: CONFIG.GITHUB.CLIENT_SECRET,
-    // });
-
-    // const { token } = await auth({
-    //   type: "installation",
-    //   installationId: installationId,
-    // });
-
-    // console.log("\ntoken", token);
-
-    // const lastCommit = await retrieveLastCommitFromBranch({
-    //   branch: "main",
-    //   owner: "magim-io",
-    //   repo: "hunterrank",
-    //   token: token,
-    // });
-
-    // console.log("\nlastCommit", lastCommit.data.commit.sha);
-
-    // const blob = await createActionBlob({
-    //   owner: "magim-io",
-    //   repo: "hunterrank",
-    //   content: fileContent.toString(),
-    //   token: token,
-    // });
-    // console.log("\nblob", blob.data);
-
-    // const tree = await createTreeObject({
-    //   owner: "magim-io",
-    //   repo: "hunterrank",
-    //   token: token,
-    //   baseTree: lastCommit.data.commit.sha,
-    //   tree: {
-    //     sha: blob.data["sha"],
-    //     mode: "100644",
-    //     path: ".github/workflows/magim-dependencymap.yml",
-    //     type: "blob",
-    //   },
-    // });
-    // console.log("\ntree", tree.data);
-
-    // const commit = await createCommit({
-    //   owner: "magim-io",
-    //   repo: "hunterrank",
-    //   message: "install magim dependencymap workflow",
-    //   token: token,
-    //   tree: tree.data["sha"],
-    //   parents: [lastCommit.data.commit.sha],
-    // });
-    // console.log("\ncommit", commit.data);
-
-    // const ref = await updateReference({
-    //   owner: "magim-io",
-    //   repo: "hunterrank",
-    //   ref: "refs/heads/main",
-    //   sha: commit.data["sha"],
-    //   token: token,
-    // });
-
-    // console.log("\nref", ref.data);
-
     const commitMessage = "install magim dependencymap workflow";
 
     const fileContent = await readFile({
@@ -174,7 +97,7 @@ const installDependencyMapAction = async ({
 
     console.log("\nref", ref.data);
   } catch (err) {
-    throw new ErrorResponse("Fail to install dependency map action", 500);
+    throw new Api500Error("Fail to install dependency map action");
   }
 };
 
@@ -201,7 +124,7 @@ const retrieveLastCommitFromBranch = async ({
 
     return commit;
   } catch (err) {
-    throw new ErrorResponse("Fail to retrieve last commit from branch", 500);
+    throw new Api500Error("Fail to retrieve last commit from branch");
   }
 };
 
@@ -232,7 +155,7 @@ const createActionBlob = async ({
     );
     return blob;
   } catch (err) {
-    throw new ErrorResponse("Fail to create blob", 500);
+    throw new Api500Error("Fail to create blob");
   }
 };
 
@@ -277,7 +200,7 @@ const createTreeObject = async ({
     );
     return tree;
   } catch (err) {
-    throw new ErrorResponse("Fail to create tree", 500);
+    throw new Api500Error("Fail to create tree");
   }
 };
 
@@ -313,7 +236,7 @@ const createCommit = async ({
     );
     return commit;
   } catch (err) {
-    throw new ErrorResponse("Fail to create commit", 500);
+    throw new Api500Error("Fail to create commit", 500);
   }
 };
 
@@ -346,7 +269,7 @@ const createReference = async ({
     );
     return reference;
   } catch (err) {
-    throw new ErrorResponse("Fail to create reference", 500);
+    throw new Api500Error("Fail to create reference", 500);
   }
 };
 
@@ -379,7 +302,7 @@ const updateReference = async ({
     );
     return reference;
   } catch (err) {
-    throw new ErrorResponse("Fail to update reference", 500);
+    throw new Api500Error("Fail to update reference", 500);
   }
 };
 

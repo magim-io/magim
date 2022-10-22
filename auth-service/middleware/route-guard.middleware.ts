@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import asyncHanlder from "./async-handler.middleware";
-import ErrorResponse from "../../lib/exceptions/error-response.exception";
+import Api401Error from "../../lib/errors/api-401.error";
 import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import CONFIG from "../config/config";
@@ -23,9 +23,7 @@ const routeGuard = asyncHanlder(
     // }
 
     if (!token) {
-      return next(
-        new ErrorResponse("Not authorized to access this route", 401)
-      );
+      return next(new Api401Error("Not authorized to access this route"));
     }
 
     try {
@@ -38,18 +36,14 @@ const routeGuard = asyncHanlder(
       });
 
       if (user === null) {
-        return next(
-          new ErrorResponse("Not authorized to access this route", 401)
-        );
+        return next(new Api401Error("Not authorized to access this route"));
       }
 
       req.user = user;
 
       next();
     } catch (err) {
-      return next(
-        new ErrorResponse("Not authorized to access this route", 401)
-      );
+      return next(new Api401Error("Not authorized to access this route"));
     }
   }
 );

@@ -6,8 +6,10 @@ import {
   User,
   UserOrganization,
 } from "@prisma/client";
-import ErrorResponse from "../../lib/exceptions/error-response.exception";
+import Api500Error from "../../lib/errors/api-500.error";
+import Api404Error from "../../lib/errors/api-404.error";
 import nodemailer from "nodemailer";
+import Api403Error from "../../lib/errors/api-403.error";
 
 const prisma = new PrismaClient();
 
@@ -39,7 +41,7 @@ const createOrg = async ({
 
     return org;
   } catch (err) {
-    throw new ErrorResponse("Fail to create new organization", 500);
+    throw new Api500Error("Fail to create new organization");
   }
 };
 
@@ -64,7 +66,7 @@ const retrieveOrg = async ({
 
     return orgs;
   } catch (err) {
-    throw new ErrorResponse("Fail to retrieve organizations", 500);
+    throw new Api500Error("Fail to retrieve organizations");
   }
 };
 
@@ -83,7 +85,7 @@ const retrieveOrgs = async ({ user }: { user: User }): Promise<any> => {
 
     return orgs;
   } catch (err) {
-    throw new ErrorResponse("Fail to retrieve organizations", 500);
+    throw new Api500Error("Fail to retrieve organizations");
   }
 };
 
@@ -105,7 +107,7 @@ const deleteOrg = async ({
     });
 
     if (!org) {
-      throw new ErrorResponse("Fail to find organization with this id", 404);
+      throw new Api404Error("Fail to find organization with this id");
     }
 
     await prisma.organization.delete({
@@ -114,7 +116,7 @@ const deleteOrg = async ({
       },
     });
   } catch (err) {
-    throw new ErrorResponse("Fail to delete organization", 500);
+    throw new Api500Error("Fail to delete organization");
   }
 };
 
@@ -139,10 +141,7 @@ const inviteMember = async ({
     });
 
     if (!inviterOrg) {
-      throw new ErrorResponse(
-        "Inviter does not belong to the organization",
-        403
-      );
+      throw new Api403Error("Inviter does not belong to the organization");
     }
 
     newMember = await prisma.user.findFirst({
@@ -152,7 +151,7 @@ const inviteMember = async ({
     });
 
     if (!newMember) {
-      throw new ErrorResponse("Fail to find member to invite", 404);
+      throw new Api404Error("Fail to find member to invite");
     }
 
     const inviatation = await prisma.organizationInviatation.create({
@@ -168,7 +167,7 @@ const inviteMember = async ({
 
     return inviatation;
   } catch (err) {
-    throw new ErrorResponse("Fail to invite member to organization", 500);
+    throw new Api500Error("Fail to invite member to organization");
   }
 };
 
@@ -190,9 +189,8 @@ const joinOrg = async ({
     });
 
     if (!inviatation) {
-      throw new ErrorResponse(
-        "You have not been invited to join the organization",
-        404
+      throw new Api404Error(
+        "You have not been invited to join the organization"
       );
     }
 
@@ -209,7 +207,7 @@ const joinOrg = async ({
       },
     });
   } catch (err) {
-    throw new ErrorResponse("Fail to join organization", 500);
+    throw new Api500Error("Fail to join organization");
   }
 };
 
@@ -246,7 +244,7 @@ const sendEmail = async () => {
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
   } catch (err) {
-    throw new ErrorResponse("Fail to send inviatation via email", 500);
+    throw new Api500Error("Fail to send inviatation via email");
   }
 };
 
