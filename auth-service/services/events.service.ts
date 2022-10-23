@@ -1,6 +1,7 @@
 import { createAppAuth } from "@octokit/auth-app";
 import axios, { AxiosResponse } from "axios";
 import Api500Error from "../../lib/errors/api-500.error";
+import BaseError from "../../lib/errors/base-error.error";
 import CONFIG from "../config/config";
 import { readFile } from "../helpers/fs.helper";
 
@@ -16,7 +17,7 @@ const installDependencyMapAction = async ({
   owner: string;
   repository: string;
   reference: string;
-}): Promise<void> => {
+}): Promise<void | BaseError> => {
   try {
     const commitMessage = "install magim dependencymap workflow";
 
@@ -53,6 +54,10 @@ const installDependencyMapAction = async ({
       token: token,
     });
 
+    if (lastCommit instanceof BaseError) {
+      return lastCommit;
+    }
+
     console.log("\nlastCommit", lastCommit.data.commit.sha);
 
     const blob = await createActionBlob({
@@ -61,6 +66,11 @@ const installDependencyMapAction = async ({
       content: fileContent.toString(),
       token: token,
     });
+
+    if (blob instanceof BaseError) {
+      return blob;
+    }
+
     console.log("\nblob", blob.data);
 
     const tree = await createTreeObject({
@@ -75,6 +85,11 @@ const installDependencyMapAction = async ({
         type: "blob",
       },
     });
+
+    if (tree instanceof BaseError) {
+      return tree;
+    }
+
     console.log("\ntree", tree.data);
 
     const commit = await createCommit({
@@ -85,6 +100,11 @@ const installDependencyMapAction = async ({
       tree: tree.data["sha"],
       parents: [lastCommit.data.commit.sha],
     });
+
+    if (commit instanceof BaseError) {
+      return commit;
+    }
+
     console.log("\ncommit", commit.data);
 
     const ref = await updateReference({
@@ -95,9 +115,13 @@ const installDependencyMapAction = async ({
       token: token,
     });
 
+    if (ref instanceof BaseError) {
+      return ref;
+    }
+
     console.log("\nref", ref.data);
   } catch (err) {
-    throw new Api500Error("Fail to install dependency map action");
+    return new Api500Error("Fail to install dependency map action");
   }
 };
 
@@ -111,7 +135,7 @@ const retrieveLastCommitFromBranch = async ({
   repo: string;
   branch: string;
   token: string;
-}): Promise<AxiosResponse<any, any>> => {
+}): Promise<AxiosResponse<any, any> | BaseError> => {
   try {
     const commit = await axios.get(
       `https://api.github.com/repos/${owner}/${repo}/branches/${branch}`,
@@ -124,7 +148,7 @@ const retrieveLastCommitFromBranch = async ({
 
     return commit;
   } catch (err) {
-    throw new Api500Error("Fail to retrieve last commit from branch");
+    return new Api500Error("Fail to retrieve last commit from branch");
   }
 };
 
@@ -138,7 +162,7 @@ const createActionBlob = async ({
   repo: string;
   content: string;
   token: string;
-}): Promise<AxiosResponse<any, any>> => {
+}): Promise<AxiosResponse<any, any> | BaseError> => {
   const payload = {
     content: content,
     encoding: "utf8",
@@ -155,7 +179,7 @@ const createActionBlob = async ({
     );
     return blob;
   } catch (err) {
-    throw new Api500Error("Fail to create blob");
+    return new Api500Error("Fail to create blob");
   }
 };
 
@@ -176,7 +200,7 @@ const createTreeObject = async ({
   };
   token: string;
   baseTree: string;
-}): Promise<AxiosResponse<any, any>> => {
+}): Promise<AxiosResponse<any, any> | BaseError> => {
   const payload = {
     base_tree: baseTree,
     tree: [
@@ -200,7 +224,7 @@ const createTreeObject = async ({
     );
     return tree;
   } catch (err) {
-    throw new Api500Error("Fail to create tree");
+    return new Api500Error("Fail to create tree");
   }
 };
 
@@ -218,7 +242,7 @@ const createCommit = async ({
   tree: string;
   token: string;
   parents: string[];
-}): Promise<AxiosResponse<any, any>> => {
+}): Promise<AxiosResponse<any, any> | BaseError> => {
   const payload = {
     message: message,
     tree: tree,
@@ -236,7 +260,7 @@ const createCommit = async ({
     );
     return commit;
   } catch (err) {
-    throw new Api500Error("Fail to create commit", 500);
+    return new Api500Error("Fail to create commit", 500);
   }
 };
 
@@ -252,7 +276,7 @@ const createReference = async ({
   ref: string;
   sha: string;
   token: string;
-}): Promise<AxiosResponse<any, any>> => {
+}): Promise<AxiosResponse<any, any> | BaseError> => {
   try {
     const payload = {
       ref: ref,
@@ -269,7 +293,7 @@ const createReference = async ({
     );
     return reference;
   } catch (err) {
-    throw new Api500Error("Fail to create reference", 500);
+    return new Api500Error("Fail to create reference", 500);
   }
 };
 
@@ -285,7 +309,7 @@ const updateReference = async ({
   ref: string;
   sha: string;
   token: string;
-}): Promise<AxiosResponse<any, any>> => {
+}): Promise<AxiosResponse<any, any> | BaseError> => {
   try {
     const payload = {
       sha: sha,
@@ -302,7 +326,7 @@ const updateReference = async ({
     );
     return reference;
   } catch (err) {
-    throw new Api500Error("Fail to update reference", 500);
+    return new Api500Error("Fail to update reference", 500);
   }
 };
 

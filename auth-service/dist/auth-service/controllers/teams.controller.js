@@ -37,6 +37,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.joinTeam = exports.createTeam = void 0;
 const lodash_1 = require("lodash");
+const base_error_error_1 = __importDefault(require("../../lib/errors/base-error.error"));
 const async_handler_middleware_1 = __importDefault(require("../middleware/async-handler.middleware"));
 const teamService = __importStar(require("../services/teams.service"));
 const createTeam = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -49,6 +50,9 @@ const createTeam = (0, async_handler_middleware_1.default)((req, res, next) => _
             organizationId: teamDto.organizationId,
             user: user,
         });
+    }
+    if (team instanceof base_error_error_1.default) {
+        return next(team);
     }
     res.status(201).json({
         success: true,
@@ -67,6 +71,9 @@ const joinTeam = (0, async_handler_middleware_1.default)((req, res, next) => __a
             organizationId: orgId,
             teamId: teamId,
         });
+    }
+    if (joined instanceof base_error_error_1.default) {
+        return next(joined);
     }
     res.status(201).json({
         success: true,

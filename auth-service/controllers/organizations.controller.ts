@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { get } from "lodash";
+import BaseError from "../../lib/errors/base-error.error";
 import asyncHanlder from "../middleware/async-handler.middleware";
 import * as orgService from "../services/organizations.service";
 
@@ -13,6 +14,10 @@ const createOrg = asyncHanlder(
         organization: orgDto,
         owner: req.user,
       });
+    }
+
+    if (org instanceof BaseError) {
+      return next(org);
     }
 
     res.status(201).json({
@@ -35,6 +40,10 @@ const retrieveOrg = asyncHanlder(
       });
     }
 
+    if (org instanceof BaseError) {
+      return next(org);
+    }
+
     res.status(200).json({
       success: true,
       data: org,
@@ -49,6 +58,10 @@ const retrieveOrgs = asyncHanlder(
 
     if (user) {
       orgs = await orgService.retrieveOrgs({ user: user });
+    }
+
+    if (orgs instanceof BaseError) {
+      return next(orgs);
     }
 
     res.status(200).json({
@@ -66,6 +79,10 @@ const deleteOrg = asyncHanlder(
 
     if (owner && orgId) {
       org = await orgService.deleteOrg({ organizationId: orgId, owner: owner });
+    }
+
+    if (org instanceof BaseError) {
+      return next(org);
     }
 
     res.status(204).json({
@@ -89,6 +106,11 @@ const inviteMember = asyncHanlder(
         organizationId: orgId,
       });
     }
+
+    if (member instanceof BaseError) {
+      return next(member);
+    }
+
     res.status(201).json({ success: true, data: member });
   }
 );
@@ -106,6 +128,10 @@ const joinOrg = asyncHanlder(
         user: user,
         organizationId: orgId,
       });
+    }
+
+    if (joinedOrg instanceof BaseError) {
+      return next(joinedOrg);
     }
 
     res.status(201).json({

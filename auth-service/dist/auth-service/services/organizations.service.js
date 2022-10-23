@@ -39,7 +39,7 @@ const createOrg = ({ organization, owner, }) => __awaiter(void 0, void 0, void 0
         return org;
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to create new organization");
+        return new api_500_error_1.default("Fail to create new organization");
     }
 });
 exports.createOrg = createOrg;
@@ -57,7 +57,7 @@ const retrieveOrg = ({ user, organizationId, }) => __awaiter(void 0, void 0, voi
         return orgs;
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to retrieve organizations");
+        return new api_500_error_1.default("Fail to retrieve organizations");
     }
 });
 exports.retrieveOrg = retrieveOrg;
@@ -75,7 +75,7 @@ const retrieveOrgs = ({ user }) => __awaiter(void 0, void 0, void 0, function* (
         return orgs;
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to retrieve organizations");
+        return new api_500_error_1.default("Fail to retrieve organizations");
     }
 });
 exports.retrieveOrgs = retrieveOrgs;
@@ -89,7 +89,7 @@ const deleteOrg = ({ organizationId, owner, }) => __awaiter(void 0, void 0, void
             },
         });
         if (!org) {
-            throw new api_404_error_1.default("Fail to find organization with this id");
+            return new api_404_error_1.default("Fail to find organization with this id");
         }
         yield prisma.organization.delete({
             where: {
@@ -98,7 +98,7 @@ const deleteOrg = ({ organizationId, owner, }) => __awaiter(void 0, void 0, void
         });
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to delete organization");
+        return new api_500_error_1.default("Fail to delete organization");
     }
 });
 exports.deleteOrg = deleteOrg;
@@ -113,7 +113,7 @@ const inviteMember = ({ user, memberEmail, organizationId, }) => __awaiter(void 
             },
         });
         if (!inviterOrg) {
-            throw new api_403_error_1.default("Inviter does not belong to the organization");
+            return new api_403_error_1.default("Inviter does not belong to the organization");
         }
         newMember = yield prisma.user.findFirst({
             where: {
@@ -121,7 +121,7 @@ const inviteMember = ({ user, memberEmail, organizationId, }) => __awaiter(void 
             },
         });
         if (!newMember) {
-            throw new api_404_error_1.default("Fail to find member to invite");
+            return new api_404_error_1.default("Fail to find member to invite");
         }
         const inviatation = yield prisma.organizationInviatation.create({
             data: {
@@ -135,7 +135,7 @@ const inviteMember = ({ user, memberEmail, organizationId, }) => __awaiter(void 
         return inviatation;
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to invite member to organization");
+        return new api_500_error_1.default("Fail to invite member to organization");
     }
 });
 exports.inviteMember = inviteMember;
@@ -148,7 +148,7 @@ const joinOrg = ({ user, organizationId, inviatationId, }) => __awaiter(void 0, 
             },
         });
         if (!inviatation) {
-            throw new api_404_error_1.default("You have not been invited to join the organization");
+            return new api_404_error_1.default("You have not been invited to join the organization");
         }
         yield prisma.organizationInviatation.delete({
             where: {
@@ -163,7 +163,7 @@ const joinOrg = ({ user, organizationId, inviatationId, }) => __awaiter(void 0, 
         });
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to join organization");
+        return new api_500_error_1.default("Fail to join organization");
     }
 });
 exports.joinOrg = joinOrg;
@@ -197,6 +197,6 @@ const sendEmail = () => __awaiter(void 0, void 0, void 0, function* () {
         // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to send inviatation via email");
+        return new api_500_error_1.default("Fail to send inviatation via email");
     }
 });

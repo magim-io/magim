@@ -36,13 +36,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.installDependencyMapAction = void 0;
+const base_error_error_1 = __importDefault(require("../../lib/errors/base-error.error"));
 const async_handler_middleware_1 = __importDefault(require("../middleware/async-handler.middleware"));
 const eventService = __importStar(require("../services/events.service"));
 const installDependencyMapAction = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const installationId = req.body.installation.id;
     const action = req.body.action;
+    let event;
     if (action === "created") {
-        yield eventService.installDependencyMapAction({
+        event = yield eventService.installDependencyMapAction({
             installationId: installationId,
             branch: "main",
             owner: "f-plms",
@@ -50,5 +52,12 @@ const installDependencyMapAction = (0, async_handler_middleware_1.default)((req,
             repository: "hunterrank",
         });
     }
+    if (event instanceof base_error_error_1.default) {
+        return next(event);
+    }
+    res.status(200).json({
+        success: true,
+        data: "Magim Github App installed successfully.",
+    });
 }));
 exports.installDependencyMapAction = installDependencyMapAction;

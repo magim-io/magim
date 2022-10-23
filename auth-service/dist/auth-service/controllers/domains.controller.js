@@ -35,7 +35,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createDomain = void 0;
+exports.retrieveDomains = exports.createDomain = void 0;
+const base_error_error_1 = __importDefault(require("../../lib/errors/base-error.error"));
 const async_handler_middleware_1 = __importDefault(require("../middleware/async-handler.middleware"));
 const domainService = __importStar(require("../services/domains.service"));
 const createDomain = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -49,9 +50,27 @@ const createDomain = (0, async_handler_middleware_1.default)((req, res, next) =>
             teamId: domainDto.teamId,
         });
     }
-    res.status(201).json({
+    if (domain instanceof base_error_error_1.default) {
+        return next(domain);
+    }
+    res.status(200).json({
         success: true,
         data: domain,
     });
 }));
 exports.createDomain = createDomain;
+const retrieveDomains = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    let domains;
+    if (user) {
+        domains = yield domainService.retrieveDomains({ user: user });
+    }
+    if (domains instanceof base_error_error_1.default) {
+        return next(domains);
+    }
+    res.status(200).json({
+        success: true,
+        data: domains,
+    });
+}));
+exports.retrieveDomains = retrieveDomains;

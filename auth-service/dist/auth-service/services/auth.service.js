@@ -32,7 +32,7 @@ const retrieveGithubUser = ({ code, }) => __awaiter(void 0, void 0, void 0, func
         return user.data;
     }
     catch (err) {
-        throw new api_500_error_1.default("Failed to retrieve user info from Github");
+        return new api_500_error_1.default("Failed to retrieve user info from Github");
     }
 });
 exports.retrieveGithubUser = retrieveGithubUser;
@@ -60,7 +60,7 @@ const loginWithGithub = ({ user, }) => __awaiter(void 0, void 0, void 0, functio
         return extUser;
     }
     catch (err) {
-        throw new api_500_error_1.default("Failed to login user");
+        return new api_500_error_1.default("Failed to login user");
     }
 });
 exports.loginWithGithub = loginWithGithub;

@@ -21,7 +21,7 @@ const errorHandler = (err, req, res, next) => {
     logger_middleware_1.default.error(err);
     res.status(err.statusCode || 500).json({
         success: false,
-        error: err.message || "Server error",
+        error: err || "Server error",
     });
 };
 exports.errorHandler = errorHandler;

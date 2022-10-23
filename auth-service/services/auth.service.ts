@@ -4,6 +4,7 @@ import querystring from "query-string";
 import { GithubUser } from "../models/github-user.model";
 import Api500Error from "../../lib/errors/api-500.error";
 import { PrismaClient, User } from "@prisma/client";
+import BaseError from "../../lib/errors/base-error.error";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +12,7 @@ const retrieveGithubUser = async ({
   code,
 }: {
   code: string;
-}): Promise<GithubUser> => {
+}): Promise<GithubUser | BaseError> => {
   try {
     const githubToken = await axios.post(
       `https://github.com/login/oauth/access_token?client_id=${CONFIG.GITHUB.CLIENT_ID}&client_secret=${CONFIG.GITHUB.CLIENT_SECRET}&code=${code}`
@@ -28,7 +29,7 @@ const retrieveGithubUser = async ({
 
     return user.data;
   } catch (err) {
-    throw new Api500Error("Failed to retrieve user info from Github");
+    return new Api500Error("Failed to retrieve user info from Github");
   }
 };
 
@@ -36,7 +37,7 @@ const loginWithGithub = async ({
   user,
 }: {
   user: GithubUser;
-}): Promise<User | null> => {
+}): Promise<User | null | BaseError> => {
   try {
     const { name, avatar_url, bio, email, location, login } = user;
 
@@ -63,7 +64,7 @@ const loginWithGithub = async ({
 
     return extUser;
   } catch (err) {
-    throw new Api500Error("Failed to login user");
+    return new Api500Error("Failed to login user");
   }
 };
 

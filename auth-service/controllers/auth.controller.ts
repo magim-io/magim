@@ -6,6 +6,7 @@ import { get } from "lodash";
 import { GithubUser } from "../models/github-user.model";
 import jwt from "jsonwebtoken";
 import CONFIG from "../config/config";
+import BaseError from "../../lib/errors/base-error.error";
 
 const loginWithGithub = asyncHanlder(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -15,17 +16,24 @@ const loginWithGithub = asyncHanlder(
     // authService.retrieveInstallations();
 
     if (!code) {
-      // return next(new ErrorResponse("Github code is missing", 401));
       return next(new Api401Error("Github code is missing"));
     }
 
-    const githubUser: GithubUser = await authService.retrieveGithubUser({
+    const githubUser = await authService.retrieveGithubUser({
       code,
     });
+
+    if (githubUser instanceof BaseError) {
+      return next(githubUser);
+    }
 
     const user = await authService.loginWithGithub({
       user: githubUser,
     });
+
+    if (user instanceof BaseError) {
+      return next(user);
+    }
 
     if (user !== null) {
       if (!!CONFIG.SERVER.JWT_SECRET) {

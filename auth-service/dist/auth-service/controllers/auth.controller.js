@@ -42,20 +42,26 @@ const authService = __importStar(require("../services/auth.service"));
 const lodash_1 = require("lodash");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config/config"));
+const base_error_error_1 = __importDefault(require("../../lib/errors/base-error.error"));
 const loginWithGithub = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const code = (0, lodash_1.get)(req, "query.code");
     const path = (0, lodash_1.get)(req, "query.path", "/");
     // authService.retrieveInstallations();
     if (!code) {
-        // return next(new ErrorResponse("Github code is missing", 401));
         return next(new api_401_error_1.default("Github code is missing"));
     }
     const githubUser = yield authService.retrieveGithubUser({
         code,
     });
+    if (githubUser instanceof base_error_error_1.default) {
+        return next(githubUser);
+    }
     const user = yield authService.loginWithGithub({
         user: githubUser,
     });
+    if (user instanceof base_error_error_1.default) {
+        return next(user);
+    }
     if (user !== null) {
         if (!!config_1.default.SERVER.JWT_SECRET) {
             const token = jsonwebtoken_1.default.sign(user, config_1.default.SERVER.JWT_SECRET);

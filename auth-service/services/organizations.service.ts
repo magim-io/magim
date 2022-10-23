@@ -10,6 +10,7 @@ import Api500Error from "../../lib/errors/api-500.error";
 import Api404Error from "../../lib/errors/api-404.error";
 import nodemailer from "nodemailer";
 import Api403Error from "../../lib/errors/api-403.error";
+import BaseError from "../../lib/errors/base-error.error";
 
 const prisma = new PrismaClient();
 
@@ -19,7 +20,7 @@ const createOrg = async ({
 }: {
   organization: Organization;
   owner: User;
-}): Promise<Organization> => {
+}): Promise<Organization | BaseError> => {
   try {
     const org: Organization = await prisma.organization.create({
       data: organization,
@@ -41,7 +42,7 @@ const createOrg = async ({
 
     return org;
   } catch (err) {
-    throw new Api500Error("Fail to create new organization");
+    return new Api500Error("Fail to create new organization");
   }
 };
 
@@ -66,7 +67,7 @@ const retrieveOrg = async ({
 
     return orgs;
   } catch (err) {
-    throw new Api500Error("Fail to retrieve organizations");
+    return new Api500Error("Fail to retrieve organizations");
   }
 };
 
@@ -85,7 +86,7 @@ const retrieveOrgs = async ({ user }: { user: User }): Promise<any> => {
 
     return orgs;
   } catch (err) {
-    throw new Api500Error("Fail to retrieve organizations");
+    return new Api500Error("Fail to retrieve organizations");
   }
 };
 
@@ -95,7 +96,7 @@ const deleteOrg = async ({
 }: {
   organizationId: string;
   owner: User;
-}): Promise<void> => {
+}): Promise<void | BaseError> => {
   try {
     let org;
 
@@ -107,7 +108,7 @@ const deleteOrg = async ({
     });
 
     if (!org) {
-      throw new Api404Error("Fail to find organization with this id");
+      return new Api404Error("Fail to find organization with this id");
     }
 
     await prisma.organization.delete({
@@ -116,7 +117,7 @@ const deleteOrg = async ({
       },
     });
   } catch (err) {
-    throw new Api500Error("Fail to delete organization");
+    return new Api500Error("Fail to delete organization");
   }
 };
 
@@ -128,7 +129,7 @@ const inviteMember = async ({
   user: User;
   memberEmail: string;
   organizationId: string;
-}): Promise<OrganizationInviatation> => {
+}): Promise<OrganizationInviatation | BaseError> => {
   try {
     let inviterOrg;
     let newMember;
@@ -141,7 +142,7 @@ const inviteMember = async ({
     });
 
     if (!inviterOrg) {
-      throw new Api403Error("Inviter does not belong to the organization");
+      return new Api403Error("Inviter does not belong to the organization");
     }
 
     newMember = await prisma.user.findFirst({
@@ -151,7 +152,7 @@ const inviteMember = async ({
     });
 
     if (!newMember) {
-      throw new Api404Error("Fail to find member to invite");
+      return new Api404Error("Fail to find member to invite");
     }
 
     const inviatation = await prisma.organizationInviatation.create({
@@ -167,7 +168,7 @@ const inviteMember = async ({
 
     return inviatation;
   } catch (err) {
-    throw new Api500Error("Fail to invite member to organization");
+    return new Api500Error("Fail to invite member to organization");
   }
 };
 
@@ -179,7 +180,7 @@ const joinOrg = async ({
   user: User;
   organizationId: string;
   inviatationId: string;
-}): Promise<UserOrganization> => {
+}): Promise<UserOrganization | BaseError> => {
   try {
     const inviatation = await prisma.organizationInviatation.findFirst({
       where: {
@@ -189,7 +190,7 @@ const joinOrg = async ({
     });
 
     if (!inviatation) {
-      throw new Api404Error(
+      return new Api404Error(
         "You have not been invited to join the organization"
       );
     }
@@ -207,7 +208,7 @@ const joinOrg = async ({
       },
     });
   } catch (err) {
-    throw new Api500Error("Fail to join organization");
+    return new Api500Error("Fail to join organization");
   }
 };
 
@@ -244,7 +245,7 @@ const sendEmail = async () => {
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
   } catch (err) {
-    throw new Api500Error("Fail to send inviatation via email");
+    return new Api500Error("Fail to send inviatation via email");
   }
 };
 

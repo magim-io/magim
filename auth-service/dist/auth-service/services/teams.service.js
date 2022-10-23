@@ -28,7 +28,7 @@ const createTeam = ({ team, user, organizationId, }) => __awaiter(void 0, void 0
             },
         });
         if (!org) {
-            throw new api_403_error_1.default("User does not have access to this route");
+            return new api_403_error_1.default("User does not have access to this route");
         }
         newTeam = yield prisma.team.create({
             data: team,
@@ -42,7 +42,7 @@ const createTeam = ({ team, user, organizationId, }) => __awaiter(void 0, void 0
         return newTeam;
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to create new team");
+        return new api_500_error_1.default("Fail to create new team");
     }
 });
 exports.createTeam = createTeam;
@@ -56,7 +56,7 @@ const joinTeam = ({ user, teamId, organizationId, }) => __awaiter(void 0, void 0
             },
         });
         if (!org) {
-            throw new api_403_error_1.default("User does not have access to this route");
+            return new api_403_error_1.default("User does not have access to this route");
         }
         team = yield prisma.userTeam.create({
             data: {
@@ -67,7 +67,7 @@ const joinTeam = ({ user, teamId, organizationId, }) => __awaiter(void 0, void 0
         return team;
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to join team");
+        return new api_500_error_1.default("Fail to join team");
     }
 });
 exports.joinTeam = joinTeam;

@@ -37,6 +37,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.joinOrg = exports.inviteMember = exports.deleteOrg = exports.retrieveOrgs = exports.retrieveOrg = exports.createOrg = void 0;
 const lodash_1 = require("lodash");
+const base_error_error_1 = __importDefault(require("../../lib/errors/base-error.error"));
 const async_handler_middleware_1 = __importDefault(require("../middleware/async-handler.middleware"));
 const orgService = __importStar(require("../services/organizations.service"));
 const createOrg = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -47,6 +48,9 @@ const createOrg = (0, async_handler_middleware_1.default)((req, res, next) => __
             organization: orgDto,
             owner: req.user,
         });
+    }
+    if (org instanceof base_error_error_1.default) {
+        return next(org);
     }
     res.status(201).json({
         success: true,
@@ -64,6 +68,9 @@ const retrieveOrg = (0, async_handler_middleware_1.default)((req, res, next) => 
             organizationId: orgId,
         });
     }
+    if (org instanceof base_error_error_1.default) {
+        return next(org);
+    }
     res.status(200).json({
         success: true,
         data: org,
@@ -75,6 +82,9 @@ const retrieveOrgs = (0, async_handler_middleware_1.default)((req, res, next) =>
     let orgs;
     if (user) {
         orgs = yield orgService.retrieveOrgs({ user: user });
+    }
+    if (orgs instanceof base_error_error_1.default) {
+        return next(orgs);
     }
     res.status(200).json({
         success: true,
@@ -88,6 +98,9 @@ const deleteOrg = (0, async_handler_middleware_1.default)((req, res, next) => __
     let org;
     if (owner && orgId) {
         org = yield orgService.deleteOrg({ organizationId: orgId, owner: owner });
+    }
+    if (org instanceof base_error_error_1.default) {
+        return next(org);
     }
     res.status(204).json({
         success: true,
@@ -107,6 +120,9 @@ const inviteMember = (0, async_handler_middleware_1.default)((req, res, next) =>
             organizationId: orgId,
         });
     }
+    if (member instanceof base_error_error_1.default) {
+        return next(member);
+    }
     res.status(201).json({ success: true, data: member });
 }));
 exports.inviteMember = inviteMember;
@@ -121,6 +137,9 @@ const joinOrg = (0, async_handler_middleware_1.default)((req, res, next) => __aw
             user: user,
             organizationId: orgId,
         });
+    }
+    if (joinedOrg instanceof base_error_error_1.default) {
+        return next(joinedOrg);
     }
     res.status(201).json({
         success: true,

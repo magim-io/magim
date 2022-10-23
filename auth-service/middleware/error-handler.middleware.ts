@@ -20,9 +20,10 @@ const errorHandler = (
   next: NextFunction
 ) => {
   logger.error(err);
+
   res.status(err.statusCode || 500).json({
     success: false,
-    error: err.message || "Server error",
+    error: err || "Server error",
   });
 };
 

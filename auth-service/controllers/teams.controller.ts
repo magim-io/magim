@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { get } from "lodash";
+import BaseError from "../../lib/errors/base-error.error";
 import asyncHanlder from "../middleware/async-handler.middleware";
 import * as teamService from "../services/teams.service";
 
@@ -15,6 +16,10 @@ const createTeam = asyncHanlder(
         organizationId: teamDto.organizationId,
         user: user,
       });
+    }
+
+    if (team instanceof BaseError) {
+      return next(team);
     }
 
     res.status(201).json({
@@ -37,6 +42,10 @@ const joinTeam = asyncHanlder(
         organizationId: orgId,
         teamId: teamId,
       });
+    }
+
+    if (joined instanceof BaseError) {
+      return next(joined);
     }
 
     res.status(201).json({

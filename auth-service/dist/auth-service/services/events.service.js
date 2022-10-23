@@ -16,6 +16,7 @@ exports.installDependencyMapAction = void 0;
 const auth_app_1 = require("@octokit/auth-app");
 const axios_1 = __importDefault(require("axios"));
 const api_500_error_1 = __importDefault(require("../../lib/errors/api-500.error"));
+const base_error_error_1 = __importDefault(require("../../lib/errors/base-error.error"));
 const config_1 = __importDefault(require("../config/config"));
 const fs_helper_1 = require("../helpers/fs.helper");
 const installDependencyMapAction = ({ installationId, branch, owner, repository, reference, }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -46,6 +47,9 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
             repo: repository,
             token: token,
         });
+        if (lastCommit instanceof base_error_error_1.default) {
+            return lastCommit;
+        }
         console.log("\nlastCommit", lastCommit.data.commit.sha);
         const blob = yield createActionBlob({
             owner: owner,
@@ -53,6 +57,9 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
             content: fileContent.toString(),
             token: token,
         });
+        if (blob instanceof base_error_error_1.default) {
+            return blob;
+        }
         console.log("\nblob", blob.data);
         const tree = yield createTreeObject({
             owner: owner,
@@ -66,6 +73,9 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
                 type: "blob",
             },
         });
+        if (tree instanceof base_error_error_1.default) {
+            return tree;
+        }
         console.log("\ntree", tree.data);
         const commit = yield createCommit({
             owner: owner,
@@ -75,6 +85,9 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
             tree: tree.data["sha"],
             parents: [lastCommit.data.commit.sha],
         });
+        if (commit instanceof base_error_error_1.default) {
+            return commit;
+        }
         console.log("\ncommit", commit.data);
         const ref = yield updateReference({
             owner: owner,
@@ -83,10 +96,13 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
             sha: commit.data["sha"],
             token: token,
         });
+        if (ref instanceof base_error_error_1.default) {
+            return ref;
+        }
         console.log("\nref", ref.data);
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to install dependency map action");
+        return new api_500_error_1.default("Fail to install dependency map action");
     }
 });
 exports.installDependencyMapAction = installDependencyMapAction;
@@ -100,7 +116,7 @@ const retrieveLastCommitFromBranch = ({ owner, repo, branch, token, }) => __awai
         return commit;
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to retrieve last commit from branch");
+        return new api_500_error_1.default("Fail to retrieve last commit from branch");
     }
 });
 const createActionBlob = ({ owner, repo, content, token, }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -117,7 +133,7 @@ const createActionBlob = ({ owner, repo, content, token, }) => __awaiter(void 0,
         return blob;
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to create blob");
+        return new api_500_error_1.default("Fail to create blob");
     }
 });
 const createTreeObject = ({ owner, repo, tree, token, baseTree, }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -141,7 +157,7 @@ const createTreeObject = ({ owner, repo, tree, token, baseTree, }) => __awaiter(
         return tree;
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to create tree");
+        return new api_500_error_1.default("Fail to create tree");
     }
 });
 const createCommit = ({ owner, repo, message, tree, token, parents, }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -159,7 +175,7 @@ const createCommit = ({ owner, repo, message, tree, token, parents, }) => __awai
         return commit;
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to create commit", 500);
+        return new api_500_error_1.default("Fail to create commit", 500);
     }
 });
 const createReference = ({ owner, repo, ref, sha, token, }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -176,7 +192,7 @@ const createReference = ({ owner, repo, ref, sha, token, }) => __awaiter(void 0,
         return reference;
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to create reference", 500);
+        return new api_500_error_1.default("Fail to create reference", 500);
     }
 });
 const updateReference = ({ owner, repo, ref, sha, token, }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -193,6 +209,6 @@ const updateReference = ({ owner, repo, ref, sha, token, }) => __awaiter(void 0,
         return reference;
     }
     catch (err) {
-        throw new api_500_error_1.default("Fail to update reference", 500);
+        return new api_500_error_1.default("Fail to update reference", 500);
     }
 });
