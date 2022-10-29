@@ -14,7 +14,7 @@ const installDependencyMapAction = asyncHanlder(
         installationId: installationId,
         branch: "main",
         owner: "f-plms",
-        reference: "refs/heads/main",
+        reference: "refs/heads/magim-managed-branch",
         repository: "hunterrank",
       });
     }

@@ -21,8 +21,11 @@ const config_1 = __importDefault(require("../config/config"));
 const fs_helper_1 = require("../helpers/fs.helper");
 const installDependencyMapAction = ({ installationId, branch, owner, repository, reference, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const commitMessage = "install magim dependencymap workflow";
-        const fileContent = yield (0, fs_helper_1.readFile)({
+        const commitMessage = "Install Magim DependencyMap Workflow";
+        const dependencymapConfigFile = yield (0, fs_helper_1.readFile)({
+            filePath: "../../../../lib/actions/magim-dependencymap.config",
+        });
+        const dependencymapWorkflowFile = yield (0, fs_helper_1.readFile)({
             filePath: "../../../../lib/actions/magim-dependencymap.yml",
         });
         if (config_1.default.GITHUB.APP_SECRET === undefined ||
@@ -51,27 +54,45 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
             return lastCommit;
         }
         console.log("\nlastCommit", lastCommit.data.commit.sha);
-        const blob = yield createActionBlob({
+        const blob1 = yield createActionBlob({
             owner: owner,
             repo: repository,
-            content: fileContent.toString(),
+            content: dependencymapWorkflowFile.toString(),
             token: token,
         });
-        if (blob instanceof base_error_error_1.default) {
-            return blob;
+        if (blob1 instanceof base_error_error_1.default) {
+            return blob1;
         }
-        console.log("\nblob", blob.data);
+        console.log("\nblob1", blob1.data);
+        const blob2 = yield createActionBlob({
+            owner: owner,
+            repo: repository,
+            content: dependencymapConfigFile.toString(),
+            token: token,
+        });
+        if (blob2 instanceof base_error_error_1.default) {
+            return blob2;
+        }
+        console.log("\nblob2", blob2.data);
         const tree = yield createTreeObject({
             owner: owner,
             repo: repository,
             token: token,
             baseTree: lastCommit.data.commit.sha,
-            tree: {
-                sha: blob.data["sha"],
-                mode: "100644",
-                path: ".github/workflows/magim-dependencymap.yml",
-                type: "blob",
-            },
+            tree: [
+                {
+                    sha: blob1.data["sha"],
+                    mode: "100644",
+                    path: ".github/workflows/magim-dependencymap.yml",
+                    type: "blob",
+                },
+                {
+                    sha: blob2.data["sha"],
+                    mode: "100644",
+                    path: "server/.magim-dependencymap.config.js",
+                    type: "blob",
+                },
+            ],
         });
         if (tree instanceof base_error_error_1.default) {
             return tree;
@@ -89,7 +110,7 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
             return commit;
         }
         console.log("\ncommit", commit.data);
-        const ref = yield updateReference({
+        const ref = yield createReference({
             owner: owner,
             repo: repository,
             ref: reference,
@@ -139,14 +160,7 @@ const createActionBlob = ({ owner, repo, content, token, }) => __awaiter(void 0,
 const createTreeObject = ({ owner, repo, tree, token, baseTree, }) => __awaiter(void 0, void 0, void 0, function* () {
     const payload = {
         base_tree: baseTree,
-        tree: [
-            {
-                path: tree.path,
-                mode: tree.mode,
-                type: tree.type,
-                sha: tree.sha,
-            },
-        ],
+        tree: tree,
     };
     try {
         const tree = yield axios_1.default.post(`https://api.github.com/repos/${owner}/${repo}/git/trees`, payload, {

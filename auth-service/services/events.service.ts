@@ -19,9 +19,13 @@ const installDependencyMapAction = async ({
   reference: string;
 }): Promise<void | BaseError> => {
   try {
-    const commitMessage = "install magim dependencymap workflow";
+    const commitMessage = "Install Magim DependencyMap Workflow";
 
-    const fileContent = await readFile({
+    const dependencymapConfigFile = await readFile({
+      filePath: "../../../../lib/actions/magim-dependencymap.config",
+    });
+
+    const dependencymapWorkflowFile = await readFile({
       filePath: "../../../../lib/actions/magim-dependencymap.yml",
     });
 
@@ -60,30 +64,51 @@ const installDependencyMapAction = async ({
 
     console.log("\nlastCommit", lastCommit.data.commit.sha);
 
-    const blob = await createActionBlob({
+    const blob1 = await createActionBlob({
       owner: owner,
       repo: repository,
-      content: fileContent.toString(),
+      content: dependencymapWorkflowFile.toString(),
       token: token,
     });
 
-    if (blob instanceof BaseError) {
-      return blob;
+    if (blob1 instanceof BaseError) {
+      return blob1;
     }
 
-    console.log("\nblob", blob.data);
+    console.log("\nblob1", blob1.data);
+
+    const blob2 = await createActionBlob({
+      owner: owner,
+      repo: repository,
+      content: dependencymapConfigFile.toString(),
+      token: token,
+    });
+
+    if (blob2 instanceof BaseError) {
+      return blob2;
+    }
+
+    console.log("\nblob2", blob2.data);
 
     const tree = await createTreeObject({
       owner: owner,
       repo: repository,
       token: token,
       baseTree: lastCommit.data.commit.sha,
-      tree: {
-        sha: blob.data["sha"],
-        mode: "100644",
-        path: ".github/workflows/magim-dependencymap.yml",
-        type: "blob",
-      },
+      tree: [
+        {
+          sha: blob1.data["sha"],
+          mode: "100644",
+          path: ".github/workflows/magim-dependencymap.yml",
+          type: "blob",
+        },
+        {
+          sha: blob2.data["sha"],
+          mode: "100644",
+          path: "server/.magim-dependencymap.config.js",
+          type: "blob",
+        },
+      ],
     });
 
     if (tree instanceof BaseError) {
@@ -107,7 +132,7 @@ const installDependencyMapAction = async ({
 
     console.log("\ncommit", commit.data);
 
-    const ref = await updateReference({
+    const ref = await createReference({
       owner: owner,
       repo: repository,
       ref: reference,
@@ -197,20 +222,13 @@ const createTreeObject = async ({
     mode: string;
     type: string;
     sha: string;
-  };
+  }[];
   token: string;
   baseTree: string;
 }): Promise<AxiosResponse<any, any> | BaseError> => {
   const payload = {
     base_tree: baseTree,
-    tree: [
-      {
-        path: tree.path,
-        mode: tree.mode,
-        type: tree.type,
-        sha: tree.sha,
-      },
-    ],
+    tree: tree,
   };
   try {
     const tree = await axios.post(
