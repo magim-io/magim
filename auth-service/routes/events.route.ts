@@ -1,10 +1,8 @@
 import express from "express";
-import { installDependencyMapAction } from "../controllers/events.controller";
+import { eventsHandler } from "../controllers/events.controller";
 
 const eventRouter = express.Router();
 
-eventRouter
-  .route("/install-dependencymap-action")
-  .post(installDependencyMapAction);
+eventRouter.route("/").post(eventsHandler);
 
 export default eventRouter;

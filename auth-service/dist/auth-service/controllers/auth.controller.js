@@ -46,7 +46,6 @@ const base_error_error_1 = __importDefault(require("../../lib/errors/base-error.
 const loginWithGithub = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const code = (0, lodash_1.get)(req, "query.code");
     const path = (0, lodash_1.get)(req, "query.path", "/");
-    // authService.retrieveInstallations();
     if (!code) {
         return next(new api_401_error_1.default("Github code is missing"));
     }

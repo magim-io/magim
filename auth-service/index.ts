@@ -13,6 +13,7 @@ import teamRouter from "./routes/teams.route";
 import domainRouter from "./routes/domains.route";
 import eventRouter from "./routes/events.route";
 import httpLogger from "./middleware/http-logger.middleware";
+import mapRouter from "./routes/maps.route";
 
 const app: Express = express();
 
@@ -30,6 +31,7 @@ app.use("/api/v1/organizations", orgRouter);
 app.use("/api/v1/teams", teamRouter);
 app.use("/api/v1/domains", domainRouter);
 app.use("/api/v1/events", eventRouter);
+app.use("/api/v1/maps", mapRouter);
 app.use(errorHandler);
 
 const server = app.listen(CONFIG.SERVER.PORT, () => {

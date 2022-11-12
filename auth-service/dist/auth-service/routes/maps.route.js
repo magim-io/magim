@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const events_controller_1 = require("../controllers/events.controller");
-const eventRouter = express_1.default.Router();
-eventRouter.route("/").post(events_controller_1.eventsHandler);
-exports.default = eventRouter;
+const maps_controller_1 = require("../controllers/maps.controller");
+const mapRouter = express_1.default.Router();
+mapRouter.route("/").post(maps_controller_1.createMap);
+exports.default = mapRouter;

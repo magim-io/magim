@@ -14,6 +14,7 @@ const teams_route_1 = __importDefault(require("./routes/teams.route"));
 const domains_route_1 = __importDefault(require("./routes/domains.route"));
 const events_route_1 = __importDefault(require("./routes/events.route"));
 const http_logger_middleware_1 = __importDefault(require("./middleware/http-logger.middleware"));
+const maps_route_1 = __importDefault(require("./routes/maps.route"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
@@ -27,6 +28,7 @@ app.use("/api/v1/organizations", organizations_route_1.default);
 app.use("/api/v1/teams", teams_route_1.default);
 app.use("/api/v1/domains", domains_route_1.default);
 app.use("/api/v1/events", events_route_1.default);
+app.use("/api/v1/maps", maps_route_1.default);
 app.use(error_handler_middleware_1.errorHandler);
 const server = app.listen(config_1.default.SERVER.PORT, () => {
     console.log(`Server running in ${config_1.default.ENV} mode on port ${config_1.default.SERVER.PORT}`);

@@ -1,8 +1,8 @@
-name: Magim DependencyMap Workflow
-run-name: Magim App installs DependencyMap Workflow 🚀
+name: Magim Dependencymap Workflow
+run-name: Magim Bot installs dependencymap workflow 🚀
 on: [push]
 jobs:
-  Generate-Dependencymap:
+  Generate-dependencymap:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -11,15 +11,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-      - name: Install dependency-cruiser package
-        run: npm install dependency-cruiser
-        working-directory: ./server
-      - name: Run dependency-cruiser package
-        run: npx depcruise src --include-only "^src" --config .magim-dependencymap.config.js --output-type json > magim-dependencymap.json
-        working-directory: ./server
-      - name: Archive dependency-cruiser output
-        uses: actions/upload-artifact@v3
+      - name: Generate dependencymap
+        uses: magim-io/generate-map@v0.1.19
+      - name: Upload generated dependencymap
+        uses: magim-io/upload-map@v0.1.0
         with:
-          name: magim-dependencymap
-          path: server/magim-dependencymap.json
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+          map-name: magim-dependencymap
+          repository: ${{ github.repository }}

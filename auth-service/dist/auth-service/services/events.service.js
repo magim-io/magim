@@ -43,7 +43,6 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
             type: "installation",
             installationId: installationId,
         });
-        console.log("\ntoken", token);
         const lastCommit = yield retrieveLastCommitFromBranch({
             branch: branch,
             owner: owner,
@@ -53,7 +52,6 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
         if (lastCommit instanceof base_error_error_1.default) {
             return lastCommit;
         }
-        console.log("\nlastCommit", lastCommit.data.commit.sha);
         const blob1 = yield createActionBlob({
             owner: owner,
             repo: repository,
@@ -63,7 +61,6 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
         if (blob1 instanceof base_error_error_1.default) {
             return blob1;
         }
-        console.log("\nblob1", blob1.data);
         const blob2 = yield createActionBlob({
             owner: owner,
             repo: repository,
@@ -73,7 +70,6 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
         if (blob2 instanceof base_error_error_1.default) {
             return blob2;
         }
-        console.log("\nblob2", blob2.data);
         const tree = yield createTreeObject({
             owner: owner,
             repo: repository,
@@ -97,7 +93,6 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
         if (tree instanceof base_error_error_1.default) {
             return tree;
         }
-        console.log("\ntree", tree.data);
         const commit = yield createCommit({
             owner: owner,
             repo: repository,
@@ -109,7 +104,6 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
         if (commit instanceof base_error_error_1.default) {
             return commit;
         }
-        console.log("\ncommit", commit.data);
         const ref = yield createReference({
             owner: owner,
             repo: repository,
@@ -120,7 +114,6 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
         if (ref instanceof base_error_error_1.default) {
             return ref;
         }
-        console.log("\nref", ref.data);
     }
     catch (err) {
         return new api_500_error_1.default("Fail to install dependency map action");

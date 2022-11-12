@@ -49,8 +49,6 @@ const installDependencyMapAction = async ({
       installationId: installationId,
     });
 
-    console.log("\ntoken", token);
-
     const lastCommit = await retrieveLastCommitFromBranch({
       branch: branch,
       owner: owner,
@@ -61,8 +59,6 @@ const installDependencyMapAction = async ({
     if (lastCommit instanceof BaseError) {
       return lastCommit;
     }
-
-    console.log("\nlastCommit", lastCommit.data.commit.sha);
 
     const blob1 = await createActionBlob({
       owner: owner,
@@ -75,8 +71,6 @@ const installDependencyMapAction = async ({
       return blob1;
     }
 
-    console.log("\nblob1", blob1.data);
-
     const blob2 = await createActionBlob({
       owner: owner,
       repo: repository,
@@ -87,8 +81,6 @@ const installDependencyMapAction = async ({
     if (blob2 instanceof BaseError) {
       return blob2;
     }
-
-    console.log("\nblob2", blob2.data);
 
     const tree = await createTreeObject({
       owner: owner,
@@ -115,8 +107,6 @@ const installDependencyMapAction = async ({
       return tree;
     }
 
-    console.log("\ntree", tree.data);
-
     const commit = await createCommit({
       owner: owner,
       repo: repository,
@@ -130,8 +120,6 @@ const installDependencyMapAction = async ({
       return commit;
     }
 
-    console.log("\ncommit", commit.data);
-
     const ref = await createReference({
       owner: owner,
       repo: repository,
@@ -143,8 +131,6 @@ const installDependencyMapAction = async ({
     if (ref instanceof BaseError) {
       return ref;
     }
-
-    console.log("\nref", ref.data);
   } catch (err) {
     return new Api500Error("Fail to install dependency map action");
   }
@@ -347,5 +333,62 @@ const updateReference = async ({
     return new Api500Error("Fail to update reference", 500);
   }
 };
+
+// const retrieveWorkflowArtifact = async ({
+//   owner,
+//   repo,
+//   artifactsUrl,
+// }: {
+//   owner: string;
+//   repo: string;
+//   artifactsUrl: string;
+// }) => {
+//   try {
+//     console.log("\nartifactsUrl", artifactsUrl);
+
+//     if (
+//       CONFIG.GITHUB.APP_SECRET === undefined ||
+//       CONFIG.GITHUB.APP_ID === undefined
+//     ) {
+//       return;
+//     }
+
+//     const auth = createAppAuth({
+//       appId: CONFIG.GITHUB.APP_ID,
+//       privateKey: CONFIG.GITHUB.APP_SECRET,
+//       clientId: CONFIG.GITHUB.CLIENT_ID,
+//       clientSecret: CONFIG.GITHUB.CLIENT_SECRET,
+//     });
+
+//     const { token } = await auth({
+//       type: "app",
+//     });
+
+//     console.log("\ntoken", token);
+
+//     const artifactsPayload = await axios.get(artifactsUrl);
+
+//     console.log("\nartifactsPayload.data", artifactsPayload.data);
+
+//     console.log(
+//       `\nGET ${artifactsPayload.data.artifacts[0].archive_download_url}`
+//     );
+//     const artifact = await axios.get(
+//       artifactsPayload.data.artifacts[0].archive_download_url,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//         responseType: "arraybuffer",
+//       }
+//     );
+
+//     console.log("\nartifact", artifact.data);
+
+//     return artifact;
+//   } catch (err) {
+//     return new Api500Error("Fail to retrieve workflow artifact", 500);
+//   }
+// };
 
 export { installDependencyMapAction };

@@ -13,8 +13,6 @@ const loginWithGithub = asyncHanlder(
     const code = get(req, "query.code");
     const path = get(req, "query.path", "/");
 
-    // authService.retrieveInstallations();
-
     if (!code) {
       return next(new Api401Error("Github code is missing"));
     }

@@ -156,7 +156,7 @@ model TeamDomain {
 model Map {
   id        String   @id @default(uuid())
   version   String
-  payload   String
+  payload   String   @db.Text
   type      MapType
   domainId  String
   domain    Domain   @relation(fields: [domainId], references: [id], onDelete: Cascade)
