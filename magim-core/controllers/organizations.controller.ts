@@ -118,8 +118,8 @@ const inviteMember = asyncHanlder(
 const joinOrg = asyncHanlder(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
-    const invId = get(req, "query.inv");
-    const orgId = get(req, "query.org");
+    const invId = get(req, "query.inv") as string;
+    const orgId = get(req, "query.org") as string;
     let joinedOrg;
 
     if (user && invId && orgId) {

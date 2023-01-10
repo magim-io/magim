@@ -32,8 +32,8 @@ const createTeam = asyncHanlder(
 const joinTeam = asyncHanlder(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
-    const teamId = get(req, "query.team");
-    const orgId = get(req, "query.org");
+    const teamId = get(req, "query.team") as string;
+    const orgId = get(req, "query.org") as string;
     let joined;
 
     if (user && orgId && teamId) {

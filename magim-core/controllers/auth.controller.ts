@@ -10,7 +10,7 @@ import BaseError from "../../lib/errors/base-error.error";
 
 const loginWithGithub = asyncHanlder(
   async (req: Request, res: Response, next: NextFunction) => {
-    const code = get(req, "query.code");
+    const code = get(req, "query.code") as string;
     const path = get(req, "query.path", "/");
 
     if (!code) {

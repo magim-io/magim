@@ -27,7 +27,10 @@ const routeGuard = asyncHanlder(
     }
 
     try {
-      const decoded = jwt.verify(token, get(CONFIG, "SERVER.JWT_SECRET"));
+      const decoded = jwt.verify(
+        token,
+        get(CONFIG, "SERVER.JWT_SECRET") as jwt.Secret
+      );
 
       const user = await prisma.user.findFirst({
         where: {
