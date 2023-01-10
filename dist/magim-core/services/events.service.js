@@ -23,10 +23,10 @@ const installDependencyMapAction = ({ installationId, branch, owner, repository,
     try {
         const commitMessage = "Install Magim DependencyMap Workflow";
         const dependencymapConfigFile = yield (0, fs_helper_1.readFile)({
-            filePath: "../../../../lib/actions/magim-dependencymap.config",
+            filePath: "../../../lib/actions/magim-dependencymap.config",
         });
         const dependencymapWorkflowFile = yield (0, fs_helper_1.readFile)({
-            filePath: "../../../../lib/actions/magim-dependencymap.yml",
+            filePath: "../../../lib/actions/magim-dependencymap.yml",
         });
         if (config_1.default.GITHUB.APP_SECRET === undefined ||
             config_1.default.GITHUB.APP_ID === undefined) {

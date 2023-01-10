@@ -12,9 +12,11 @@ jobs:
         with:
           node-version: 16
       - name: Generate dependencymap
-        uses: magim-io/generate-map@v0.1.19
-      - name: Upload generated dependencymap
-        uses: magim-io/upload-map@v0.1.0
+        uses: magim-io/generate-map@v0.1.31
         with:
-          map-name: magim-dependencymap
+          map-kind: flowmap
+      - name: Upload generated dependencymap
+        uses: magim-io/upload-map@v0.1.2
+        with:
+          map-name: magim-flowmap
           repository: ${{ github.repository }}

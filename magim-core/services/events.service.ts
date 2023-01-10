@@ -22,11 +22,11 @@ const installDependencyMapAction = async ({
     const commitMessage = "Install Magim DependencyMap Workflow";
 
     const dependencymapConfigFile = await readFile({
-      filePath: "../../../../lib/actions/magim-dependencymap.config",
+      filePath: "../../../lib/actions/magim-dependencymap.config",
     });
 
     const dependencymapWorkflowFile = await readFile({
-      filePath: "../../../../lib/actions/magim-dependencymap.yml",
+      filePath: "../../../lib/actions/magim-dependencymap.yml",
     });
 
     if (
