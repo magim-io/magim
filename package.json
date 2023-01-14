@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "NODE_ENV=production node /dist/magim-core/index.js"
+    "migrate": "cd /magim-core && npx prisma migrate deploy",
+    "start": "npm run migrate && cd .. && NODE_ENV=production node /dist/magim-core/index.js"
   },
   "author": "Tony Quach <quachhengtony@gmail.com>",
   "license": "ISC",

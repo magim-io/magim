@@ -25,8 +25,10 @@ services:
       - 5000:8080
     depends_on:
       - magim-db
+    restart: on-failure
     networks:
       - magim_network
+    command: npm run start
 volumes:
   db:
     driver: local

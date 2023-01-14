@@ -26,6 +26,7 @@ RUN npm run build
 # COPY --from=builder /dist /dist
 # RUN npx prisma generate
 
+
 WORKDIR /magim
 EXPOSE 8080
 CMD npm run start
