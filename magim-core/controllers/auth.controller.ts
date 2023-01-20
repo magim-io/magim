@@ -3,10 +3,12 @@ import Api401Error from "../../lib/errors/api-401.error";
 import asyncHanlder from "../middleware/async-handler.middleware";
 import * as authService from "../services/auth.service";
 import { get } from "lodash";
-import { GithubUser } from "../models/github-user.model";
+import { GithubUser } from "../../lib/types/github-user";
 import jwt from "jsonwebtoken";
-import CONFIG from "../config/config";
 import BaseError from "../../lib/errors/base-error.error";
+import Config from "../config/config";
+
+const CONFIG = Config.getInstance().config;
 
 const loginWithGithub = asyncHanlder(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -14,7 +16,7 @@ const loginWithGithub = asyncHanlder(
     const path = get(req, "query.path", "/");
 
     if (!code) {
-      return next(new Api401Error("Github code is missing"));
+      return next(new Api401Error("Github code is missing."));
     }
 
     const githubUser = await authService.retrieveGithubUser({

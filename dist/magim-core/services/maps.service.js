@@ -19,30 +19,25 @@ const prisma = new client_1.PrismaClient();
 const createMap = ({ repository, payload, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const repo = repository.replace(/"/gi, "");
-        console.log("\nrepo", repo);
-        console.log("\ntypeof payload", typeof payload);
-        console.log("\npayload", payload);
         const domain = yield prisma.domain.findFirst({
             where: {
                 repository: repo,
             },
         });
         if (domain === null) {
-            return new api_500_error_1.default("Repository does not exist");
+            return new api_500_error_1.default("Repository does not exist.");
         }
-        console.log("\ndomain.id", domain.id);
         const map = yield prisma.map.create({
             data: {
                 payload: payload,
                 type: client_1.MapType.DEPENDENCY,
-                version: "0.0.1",
                 domainId: domain.id,
             },
         });
         return map;
     }
     catch (err) {
-        return new api_500_error_1.default("Failed to create map");
+        return new api_500_error_1.default("Failed to create map.");
     }
 });
 exports.createMap = createMap;

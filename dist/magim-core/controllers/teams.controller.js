@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.joinTeam = exports.createTeam = void 0;
+exports.retrieveTeams = exports.joinTeam = exports.createTeam = void 0;
 const lodash_1 = require("lodash");
 const base_error_error_1 = __importDefault(require("../../lib/errors/base-error.error"));
 const async_handler_middleware_1 = __importDefault(require("../middleware/async-handler.middleware"));
@@ -60,6 +60,20 @@ const createTeam = (0, async_handler_middleware_1.default)((req, res, next) => _
     });
 }));
 exports.createTeam = createTeam;
+const retrieveTeams = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { organizationId } = req.body;
+    const teams = yield teamService.retrieveTeams({
+        organizationId: organizationId,
+    });
+    if (teams instanceof base_error_error_1.default) {
+        return next(teams);
+    }
+    res.status(201).json({
+        success: true,
+        data: teams,
+    });
+}));
+exports.retrieveTeams = retrieveTeams;
 const joinTeam = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     const teamId = (0, lodash_1.get)(req, "query.team");

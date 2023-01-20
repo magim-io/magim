@@ -11,4 +11,6 @@ domainRouter
     .route("/")
     .post(route_guard_middleware_1.default, domains_controller_1.createDomain)
     .get(route_guard_middleware_1.default, domains_controller_1.retrieveDomains);
+domainRouter.route("/:domainId/maps").get(route_guard_middleware_1.default, domains_controller_1.retrieveMaps);
+domainRouter.route("/run-workflow").post(route_guard_middleware_1.default, domains_controller_1.runWorkflow);
 exports.default = domainRouter;

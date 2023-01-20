@@ -29,6 +29,25 @@ const createTeam = asyncHanlder(
   }
 );
 
+const retrieveTeams = asyncHanlder(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { organizationId } = req.body;
+
+    const teams = await teamService.retrieveTeams({
+      organizationId: organizationId,
+    });
+
+    if (teams instanceof BaseError) {
+      return next(teams);
+    }
+
+    res.status(201).json({
+      success: true,
+      data: teams,
+    });
+  }
+);
+
 const joinTeam = asyncHanlder(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
@@ -55,4 +74,4 @@ const joinTeam = asyncHanlder(
   }
 );
 
-export { createTeam, joinTeam };
+export { createTeam, joinTeam, retrieveTeams };

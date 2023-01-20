@@ -42,7 +42,7 @@ const createOrg = async ({
 
     return org;
   } catch (err) {
-    return new Api500Error("Fail to create new organization");
+    return new Api500Error("Failed to create new organization.");
   }
 };
 
@@ -67,7 +67,7 @@ const retrieveOrg = async ({
 
     return orgs;
   } catch (err) {
-    return new Api500Error("Fail to retrieve organizations");
+    return new Api500Error("Failed to retrieve organizations.");
   }
 };
 
@@ -86,7 +86,7 @@ const retrieveOrgs = async ({ user }: { user: User }): Promise<any> => {
 
     return orgs;
   } catch (err) {
-    return new Api500Error("Fail to retrieve organizations");
+    return new Api500Error("Failed to retrieve organizations.");
   }
 };
 
@@ -108,7 +108,7 @@ const deleteOrg = async ({
     });
 
     if (!org) {
-      return new Api404Error("Fail to find organization with this id");
+      return new Api404Error("Failed to find organization with this id.");
     }
 
     await prisma.organization.delete({
@@ -117,7 +117,7 @@ const deleteOrg = async ({
       },
     });
   } catch (err) {
-    return new Api500Error("Fail to delete organization");
+    return new Api500Error("Failed to delete organization.");
   }
 };
 
@@ -142,7 +142,7 @@ const inviteMember = async ({
     });
 
     if (!inviterOrg) {
-      return new Api403Error("Inviter does not belong to the organization");
+      return new Api403Error("Inviter does not belong to the organization.");
     }
 
     newMember = await prisma.user.findFirst({
@@ -152,7 +152,7 @@ const inviteMember = async ({
     });
 
     if (!newMember) {
-      return new Api404Error("Fail to find member to invite");
+      return new Api404Error("Failed to find member to invite.");
     }
 
     const inviatation = await prisma.organizationInviatation.create({
@@ -168,7 +168,7 @@ const inviteMember = async ({
 
     return inviatation;
   } catch (err) {
-    return new Api500Error("Fail to invite member to organization");
+    return new Api500Error("Failed to invite member to organization.");
   }
 };
 
@@ -191,7 +191,7 @@ const joinOrg = async ({
 
     if (!inviatation) {
       return new Api404Error(
-        "You have not been invited to join the organization"
+        "You have not been invited to join the organization."
       );
     }
 
@@ -208,7 +208,7 @@ const joinOrg = async ({
       },
     });
   } catch (err) {
-    return new Api500Error("Fail to join organization");
+    return new Api500Error("Failed to join organization");
   }
 };
 
@@ -245,7 +245,7 @@ const sendEmail = async () => {
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
   } catch (err) {
-    return new Api500Error("Fail to send inviatation via email");
+    return new Api500Error("Failed to send inviatation via email.");
   }
 };
 

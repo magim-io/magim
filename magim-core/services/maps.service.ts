@@ -1,6 +1,8 @@
 import Api500Error from "../../lib/errors/api-500.error";
-import { Map, MapType, PrismaClient } from "@prisma/client";
+import { Map, MapType, PrismaClient, User } from "@prisma/client";
 import BaseError from "../../lib/errors/base-error.error";
+import Api404Error from "../../lib/errors/api-404.error";
+import Api403Error from "../../lib/errors/api-403.error";
 
 const prisma = new PrismaClient();
 
@@ -13,9 +15,6 @@ const createMap = async ({
 }): Promise<Map | BaseError> => {
   try {
     const repo = repository.replace(/"/gi, "");
-    console.log("\nrepo", repo);
-    console.log("\ntypeof payload", typeof payload);
-    console.log("\npayload", payload);
 
     const domain = await prisma.domain.findFirst({
       where: {
@@ -24,23 +23,20 @@ const createMap = async ({
     });
 
     if (domain === null) {
-      return new Api500Error("Repository does not exist");
+      return new Api500Error("Repository does not exist.");
     }
-
-    console.log("\ndomain.id", domain.id);
 
     const map = await prisma.map.create({
       data: {
         payload: payload,
         type: MapType.DEPENDENCY,
-        version: "0.0.1",
         domainId: domain.id,
       },
     });
 
     return map;
   } catch (err) {
-    return new Api500Error("Failed to create map");
+    return new Api500Error("Failed to create map.");
   }
 };
 

@@ -1,12 +1,13 @@
-import CONFIG from "../config/config";
 import axios from "axios";
-import querystring from "query-string";
-import { GithubUser } from "../models/github-user.model";
+import querystring from "querystring";
+import { GithubUser } from "../../lib/types/github-user";
 import Api500Error from "../../lib/errors/api-500.error";
 import { PrismaClient, User } from "@prisma/client";
 import BaseError from "../../lib/errors/base-error.error";
+import Config from "../config/config";
 
 const prisma = new PrismaClient();
+const CONFIG = Config.getInstance().config;
 
 const retrieveGithubUser = async ({
   code,
@@ -29,7 +30,7 @@ const retrieveGithubUser = async ({
 
     return user.data;
   } catch (err) {
-    return new Api500Error("Failed to retrieve user info from Github");
+    return new Api500Error("Failed to retrieve user info from Github.");
   }
 };
 
@@ -47,7 +48,7 @@ const loginWithGithub = async ({
       },
     });
 
-    if (user === null) {
+    if (extUser === null) {
       const newUser = await prisma.user.create({
         data: {
           name: name,
@@ -64,7 +65,7 @@ const loginWithGithub = async ({
 
     return extUser;
   } catch (err) {
-    return new Api500Error("Failed to login user");
+    return new Api500Error("Failed to login user.");
   }
 };
 

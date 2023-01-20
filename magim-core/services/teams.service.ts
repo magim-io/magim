@@ -1,5 +1,6 @@
 import { PrismaClient, Team, User, UserTeam } from "@prisma/client";
 import Api403Error from "../../lib/errors/api-403.error";
+import Api404Error from "../../lib/errors/api-404.error";
 import Api500Error from "../../lib/errors/api-500.error";
 import BaseError from "../../lib/errors/base-error.error";
 
@@ -26,7 +27,7 @@ const createTeam = async ({
     });
 
     if (!org) {
-      return new Api403Error("User does not have access to this route");
+      return new Api403Error("User does not have access to this route.");
     }
 
     newTeam = await prisma.team.create({
@@ -42,7 +43,32 @@ const createTeam = async ({
 
     return newTeam;
   } catch (err) {
-    return new Api500Error("Fail to create new team");
+    return new Api500Error("Failed to create new team.");
+  }
+};
+
+const retrieveTeams = async ({
+  organizationId,
+}: {
+  organizationId: string;
+}) => {
+  try {
+    const teams = await prisma.teamOrganization.findMany({
+      where: {
+        organizationId: organizationId,
+      },
+      include: {
+        team: true,
+      },
+    });
+
+    if (teams === null) {
+      throw new Api404Error("Organization does not have any teams.");
+    }
+
+    return teams;
+  } catch (err) {
+    return err;
   }
 };
 
@@ -65,7 +91,7 @@ const joinTeam = async ({
     });
 
     if (!org) {
-      return new Api403Error("User does not have access to this route");
+      return new Api403Error("User does not have access to this route.");
     }
 
     team = await prisma.userTeam.create({
@@ -77,8 +103,8 @@ const joinTeam = async ({
 
     return team;
   } catch (err) {
-    return new Api500Error("Fail to join team");
+    return new Api500Error("Failed to join team.");
   }
 };
 
-export { createTeam, joinTeam };
+export { createTeam, joinTeam, retrieveTeams };

@@ -1,6 +1,6 @@
 name: Magim Dependencymap Workflow
-run-name: Magim Bot installs dependencymap workflow 🚀
-on: [push]
+run-name: Magim Bot installs dependencymap workflow
+on: [push, workflow_dispatch]
 jobs:
   Generate-dependencymap:
     runs-on: ubuntu-latest
@@ -12,11 +12,11 @@ jobs:
         with:
           node-version: 16
       - name: Generate dependencymap
-        uses: magim-io/generate-map@v0.1.31
+        uses: magim-io/generate-map@v0.1.33
         with:
-          map-kind: flowmap
+          map-kind: dependencymap
       - name: Upload generated dependencymap
-        uses: magim-io/upload-map@v0.1.2
+        uses: magim-io/upload-map@v0.1.5
         with:
-          map-name: magim-flowmap
+          map-name: magim-dependencymap
           repository: ${{ github.repository }}

@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DELETED = exports.CREATED = exports.COMPLETED = exports.IN_PROGRESS = exports.QUEUED = exports.REQUESTED = void 0;
+const REQUESTED = "requested";
+exports.REQUESTED = REQUESTED;
+const QUEUED = "queued";
+exports.QUEUED = QUEUED;
+const IN_PROGRESS = "in_progress";
+exports.IN_PROGRESS = IN_PROGRESS;
+const COMPLETED = "completed";
+exports.COMPLETED = COMPLETED;
+const CREATED = "created";
+exports.CREATED = CREATED;
+const DELETED = "deleted";
+exports.DELETED = DELETED;

@@ -1,0 +1,21 @@
+version: "3"
+name: magim
+networks:
+  magim_network:
+    driver: bridge
+services:
+  magim-db:
+    container_name: magim-db
+    image: mysql:8.0.30
+    ports:
+      - 3306:3306
+    networks:
+      - magim_network
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+    volumes:
+      - db:/var/lib/mysql
+volumes:
+  db:
+    driver: local

@@ -5,7 +5,6 @@ import {
   isOperationalError,
   logError,
 } from "./middleware/error-handler.middleware";
-import CONFIG from "./config/config";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import orgRouter from "./routes/organizations.route";
@@ -14,8 +13,12 @@ import domainRouter from "./routes/domains.route";
 import eventRouter from "./routes/events.route";
 import httpLogger from "./middleware/http-logger.middleware";
 import mapRouter from "./routes/maps.route";
+import Config from "./config/config";
 
 const app: Express = express();
+
+Config.getInstance();
+const CONFIG = Config.getInstance().config;
 
 app.use(cors());
 app.use(express.json());

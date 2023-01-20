@@ -13,16 +13,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loginWithGithub = exports.retrieveGithubUser = void 0;
-const config_1 = __importDefault(require("../config/config"));
 const axios_1 = __importDefault(require("axios"));
-const query_string_1 = __importDefault(require("query-string"));
+const querystring_1 = __importDefault(require("querystring"));
 const api_500_error_1 = __importDefault(require("../../lib/errors/api-500.error"));
 const client_1 = require("@prisma/client");
+const config_1 = __importDefault(require("../config/config"));
 const prisma = new client_1.PrismaClient();
+const CONFIG = config_1.default.getInstance().config;
 const retrieveGithubUser = ({ code, }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const githubToken = yield axios_1.default.post(`https://github.com/login/oauth/access_token?client_id=${config_1.default.GITHUB.CLIENT_ID}&client_secret=${config_1.default.GITHUB.CLIENT_SECRET}&code=${code}`);
-        const decoded = query_string_1.default.parse(githubToken.data);
+        const githubToken = yield axios_1.default.post(`https://github.com/login/oauth/access_token?client_id=${CONFIG.GITHUB.CLIENT_ID}&client_secret=${CONFIG.GITHUB.CLIENT_SECRET}&code=${code}`);
+        const decoded = querystring_1.default.parse(githubToken.data);
         const accessToken = decoded.access_token;
         const user = yield axios_1.default.get("https://api.github.com/user", {
             headers: {
@@ -32,7 +33,7 @@ const retrieveGithubUser = ({ code, }) => __awaiter(void 0, void 0, void 0, func
         return user.data;
     }
     catch (err) {
-        return new api_500_error_1.default("Failed to retrieve user info from Github");
+        return new api_500_error_1.default("Failed to retrieve user info from Github.");
     }
 });
 exports.retrieveGithubUser = retrieveGithubUser;
@@ -44,7 +45,7 @@ const loginWithGithub = ({ user, }) => __awaiter(void 0, void 0, void 0, functio
                 email: email,
             },
         });
-        if (user === null) {
+        if (extUser === null) {
             const newUser = yield prisma.user.create({
                 data: {
                     name: name,
@@ -60,7 +61,7 @@ const loginWithGithub = ({ user, }) => __awaiter(void 0, void 0, void 0, functio
         return extUser;
     }
     catch (err) {
-        return new api_500_error_1.default("Failed to login user");
+        return new api_500_error_1.default("Failed to login user.");
     }
 });
 exports.loginWithGithub = loginWithGithub;

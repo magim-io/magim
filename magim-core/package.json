@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
-    "start:dev": "concurrently \"npx tsc --watch\" \"nodemon ../dist/magim-core/index.js\"",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon ../dist/magim-core/index.js\"",
     "start:prod": "NODE_ENV=production node ../dist/magim-core/index.js"
   },
   "author": "Tony Quach <quachhengtony@gmail.com>",

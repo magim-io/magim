@@ -1,9 +1,12 @@
 import { createAppAuth } from "@octokit/auth-app";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { MAGIM_MANAGED } from "../../lib/constants/app.constant";
 import Api500Error from "../../lib/errors/api-500.error";
 import BaseError from "../../lib/errors/base-error.error";
-import CONFIG from "../config/config";
+import Config from "../config/config";
 import { readFile } from "../helpers/fs.helper";
+
+const CONFIG = Config.getInstance().config;
 
 const installDependencyMapAction = async ({
   installationId,
@@ -29,16 +32,9 @@ const installDependencyMapAction = async ({
       filePath: "../../../lib/actions/magim-dependencymap.yml",
     });
 
-    if (
-      CONFIG.GITHUB.APP_SECRET === undefined ||
-      CONFIG.GITHUB.APP_ID === undefined
-    ) {
-      return;
-    }
-
     const auth = createAppAuth({
-      appId: CONFIG.GITHUB.APP_ID,
-      privateKey: CONFIG.GITHUB.APP_SECRET,
+      appId: CONFIG.GITHUB.APP_ID!,
+      privateKey: CONFIG.GITHUB.APP_SECRET!,
       installationId: installationId,
       clientId: CONFIG.GITHUB.CLIENT_ID,
       clientSecret: CONFIG.GITHUB.CLIENT_SECRET,
@@ -94,10 +90,16 @@ const installDependencyMapAction = async ({
           path: ".github/workflows/magim-dependencymap.yml",
           type: "blob",
         },
+        // {
+        //   sha: blob2.data["sha"],
+        //   mode: "100644",
+        //   path: "server/.magim-dependencymap.config.js",
+        //   type: "blob",
+        // },
         {
           sha: blob2.data["sha"],
           mode: "100644",
-          path: "server/.magim-dependencymap.config.js",
+          path: ".magim-dependencymap.config.js",
           type: "blob",
         },
       ],
@@ -132,7 +134,7 @@ const installDependencyMapAction = async ({
       return ref;
     }
   } catch (err) {
-    return new Api500Error("Fail to install dependency map action");
+    return new Api500Error("Failed to install dependency map action.");
   }
 };
 
@@ -159,7 +161,7 @@ const retrieveLastCommitFromBranch = async ({
 
     return commit;
   } catch (err) {
-    return new Api500Error("Fail to retrieve last commit from branch");
+    return new Api500Error("Failed to retrieve last commit from branch.");
   }
 };
 
@@ -190,7 +192,7 @@ const createActionBlob = async ({
     );
     return blob;
   } catch (err) {
-    return new Api500Error("Fail to create blob");
+    return new Api500Error("Failed to create blob.");
   }
 };
 
@@ -228,7 +230,7 @@ const createTreeObject = async ({
     );
     return tree;
   } catch (err) {
-    return new Api500Error("Fail to create tree");
+    return new Api500Error("Failed to create tree.");
   }
 };
 
@@ -264,7 +266,7 @@ const createCommit = async ({
     );
     return commit;
   } catch (err) {
-    return new Api500Error("Fail to create commit", 500);
+    return new Api500Error("Failed to create commit.");
   }
 };
 
@@ -297,7 +299,7 @@ const createReference = async ({
     );
     return reference;
   } catch (err) {
-    return new Api500Error("Fail to create reference", 500);
+    return new Api500Error("Failed to create reference.");
   }
 };
 
@@ -330,7 +332,7 @@ const updateReference = async ({
     );
     return reference;
   } catch (err) {
-    return new Api500Error("Fail to update reference", 500);
+    return new Api500Error("Failed to update reference.");
   }
 };
 
@@ -387,7 +389,7 @@ const updateReference = async ({
 
 //     return artifact;
 //   } catch (err) {
-//     return new Api500Error("Fail to retrieve workflow artifact", 500);
+//     return new Api500Error("Failed to retrieve workflow artifact.");
 //   }
 // };
 

@@ -16,8 +16,9 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const async_handler_middleware_1 = __importDefault(require("./async-handler.middleware"));
 const api_401_error_1 = __importDefault(require("../../lib/errors/api-401.error"));
 const client_1 = require("@prisma/client");
-const config_1 = __importDefault(require("../config/config"));
 const lodash_1 = require("lodash");
+const config_1 = __importDefault(require("../config/config"));
+const CONFIG = config_1.default.getInstance().config;
 const routeGuard = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let token;
     const prisma = new client_1.PrismaClient();
@@ -29,23 +30,23 @@ const routeGuard = (0, async_handler_middleware_1.default)((req, res, next) => _
     //   token = req.cookies.mgt;
     // }
     if (!token) {
-        return next(new api_401_error_1.default("Not authorized to access this route"));
+        return next(new api_401_error_1.default("Not authorized to access this route."));
     }
     try {
-        const decoded = jsonwebtoken_1.default.verify(token, (0, lodash_1.get)(config_1.default, "SERVER.JWT_SECRET"));
+        const decoded = jsonwebtoken_1.default.verify(token, (0, lodash_1.get)(CONFIG, "SERVER.JWT_SECRET"));
         const user = yield prisma.user.findFirst({
             where: {
                 id: (0, lodash_1.get)(decoded, "id"),
             },
         });
         if (user === null) {
-            return next(new api_401_error_1.default("Not authorized to access this route"));
+            return next(new api_401_error_1.default("Not authorized to access this route."));
         }
         req.user = user;
         next();
     }
     catch (err) {
-        return next(new api_401_error_1.default("Not authorized to access this route"));
+        return next(new api_401_error_1.default("Not authorized to access this route."));
     }
 }));
 exports.default = routeGuard;

@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.retrieveDomains = exports.createDomain = void 0;
+exports.retrieveMaps = exports.runWorkflow = exports.retrieveDomains = exports.createDomain = void 0;
 const base_error_error_1 = __importDefault(require("../../lib/errors/base-error.error"));
 const async_handler_middleware_1 = __importDefault(require("../middleware/async-handler.middleware"));
 const domainService = __importStar(require("../services/domains.service"));
@@ -74,3 +74,36 @@ const retrieveDomains = (0, async_handler_middleware_1.default)((req, res, next)
     });
 }));
 exports.retrieveDomains = retrieveDomains;
+const runWorkflow = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const versionDto = req.body;
+    let run;
+    if (versionDto) {
+        run = yield domainService.runWorkflow({
+            version: versionDto,
+        });
+    }
+    if (run instanceof base_error_error_1.default) {
+        return next(run);
+    }
+    res.status(200).json({
+        success: true,
+        data: "Workflow ran successfully",
+    });
+}));
+exports.runWorkflow = runWorkflow;
+const retrieveMaps = (0, async_handler_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const domainId = req.params["domainId"];
+    const maps = yield domainService.retrieveMaps({
+        domainId: domainId,
+        user: user,
+    });
+    if (maps instanceof base_error_error_1.default) {
+        return next(maps);
+    }
+    res.status(201).json({
+        success: true,
+        data: maps,
+    });
+}));
+exports.retrieveMaps = retrieveMaps;

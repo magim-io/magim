@@ -3,8 +3,10 @@ import asyncHanlder from "./async-handler.middleware";
 import Api401Error from "../../lib/errors/api-401.error";
 import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
-import CONFIG from "../config/config";
 import { get } from "lodash";
+import Config from "../config/config";
+
+const CONFIG = Config.getInstance().config;
 
 const routeGuard = asyncHanlder(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -23,7 +25,7 @@ const routeGuard = asyncHanlder(
     // }
 
     if (!token) {
-      return next(new Api401Error("Not authorized to access this route"));
+      return next(new Api401Error("Not authorized to access this route."));
     }
 
     try {
@@ -39,14 +41,14 @@ const routeGuard = asyncHanlder(
       });
 
       if (user === null) {
-        return next(new Api401Error("Not authorized to access this route"));
+        return next(new Api401Error("Not authorized to access this route."));
       }
 
       req.user = user;
 
       next();
     } catch (err) {
-      return next(new Api401Error("Not authorized to access this route"));
+      return next(new Api401Error("Not authorized to access this route."));
     }
   }
 );
