@@ -67,10 +67,10 @@ const dotenv_1 = __importDefault(require("dotenv"));
 class Config {
     constructor() {
         if (process.env.NODE_ENV === "production") {
-            dotenv_1.default.config({ path: "../env/config.prod.env" });
+            dotenv_1.default.config({ path: "./env/config.prod.env" });
         }
         else {
-            dotenv_1.default.config({ path: "../env/config.dev.env" });
+            dotenv_1.default.config({ path: "./env/config.dev.env" });
         }
         [
             "NODE_ENV",

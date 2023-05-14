@@ -72,9 +72,9 @@ class Config {
 
   private constructor() {
     if (process.env.NODE_ENV === "production") {
-      dotenv.config({ path: "../env/config.prod.env" });
+      dotenv.config({ path: "./env/config.prod.env" });
     } else {
-      dotenv.config({ path: "../env/config.dev.env" });
+      dotenv.config({ path: "./env/config.dev.env" });
     }
 
     [

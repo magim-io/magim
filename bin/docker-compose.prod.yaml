@@ -28,7 +28,7 @@ services:
     restart: on-failure
     networks:
       - magim_network
-    command: npm run start
+    command: npm run start:prod
 volumes:
   db:
     driver: local

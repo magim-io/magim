@@ -1,32 +1,25 @@
-FROM node:alpine AS builder
-WORKDIR /magim
+FROM node:alpine
 
-COPY ./package*.json /
+WORKDIR /usr/magim
 
-RUN mkdir -p lib/
-COPY ./lib/ /lib/
+COPY package*.json .
 
-RUN mkdir -p /env
-COPY ./env /env
-
-RUN mkdir -p /magim-core
-COPY ./magim-core/package*.json /magim-core
-COPY ./magim-core /magim-core
 RUN npm install
 
-WORKDIR /magim-core
+COPY . .
+
+WORKDIR /usr/magim/magim-core
+
 RUN npx prisma generate
+
 RUN npm run build
 
+WORKDIR /usr/magim/dist/magim-core/env
 
-# FROM node:alpine AS server
-# WORKDIR /magim
-# COPY ./package* /
-# RUN npm install --production
-# COPY --from=builder /dist /dist
-# RUN npx prisma generate
+COPY env/ ./
 
+WORKDIR /usr/magim
 
-WORKDIR /magim
 EXPOSE 8080
-CMD npm run start
+
+CMD ["npm", "run", "start"]

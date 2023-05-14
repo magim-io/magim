@@ -5,12 +5,11 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon ../dist/magim-core/index.js\"",
-    "start:prod": "NODE_ENV=production node ../dist/magim-core/index.js"
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon ../dist/magim-core/index.js\""
   },
-  "author": "Tony Quach <quachhengtony@gmail.com>",
-  "license": "ISC",
   "prisma": {
     "schema": "../lib/schema/schema.prisma"
-  }
+  },
+  "author": "Tony Quach <quachhengtony@gmail.com>",
+  "license": "ISC"
 }
